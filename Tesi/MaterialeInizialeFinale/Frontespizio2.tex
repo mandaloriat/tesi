@@ -1,0 +1,62 @@
+% !TEX encoding = UTF-8 Unicode
+% !TEX TS-program = pdflatex
+% !TEX root = ../Tesi.tex
+
+
+%*******************************************************
+% Frontespizio
+%*******************************************************
+\begin{titlepage}
+\pdfbookmark[1]{Frontespizio}{Frontespizio}
+\changetext{}{}{}{((\paperwidth  - \textwidth) / 2) - \oddsidemargin - \hoffset - 1in}{}
+
+%\vspace*{\stretch{1}}
+\begin{center}
+\large
+\sffamily
+\resizebox{.5\textwidth}{!}{
+\includegraphics[page=15,viewport = 135 325 260 425, clip, ]{manuale_grafica_coordinata.pdf}}\\
+%\includegraphics[width=6cm]{Sigillo3}\\
+\bigskip{\textsc{
+\myFaculty \\
+\smallskip
+\myDepartment \\}}
+Corso di Laurea in \myCourse\\
+\vspace{2cm}
+
+{\huge\spacedlowsmallcaps{{\myTitle}} \\
+}
+\vspace{3cm}
+\begin{tabular} {cc}
+\parbox{0.6\textwidth}{
+	\begin{flushleft}
+		\large
+		Relatore: \myProf \\
+		Co-relatore: \mycoProf \\
+	\end{flushleft}
+}
+&
+\parbox{0.3\textwidth}{~}
+\end{tabular}
+
+\vspace{1cm}
+
+\begin{tabular} {cc}
+\parbox{0.3\textwidth}{~}
+&
+\parbox{0.6\textwidth}{
+	\begin{flushright}
+		\large
+		Tesi di laurea di:\\
+		\large
+		\myName\\
+		Matr. \myMat
+	\end{flushright}
+}
+\end{tabular}
+
+\vspace{3cm}
+
+{\myTime}
+\end{center}
+\end{titlepage}

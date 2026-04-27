@@ -1,0 +1,444 @@
+% !TEX encoding = UTF-8 Unicode
+% !TEX TS-program = pdflatex
+% !TEX root = ../Tesi.tex
+
+
+
+%************************************************
+\myChapter{Problemi al contorno}
+%************************************************
+\label{cap:bvp}
+
+In questo capitolo viene presentata la formulazione di un problema al contorno consistente (\textit{Boundary Value Problem, BVP})  per le equazioni differenziali derivate dal problema elettromagnetico presentato nel Capitolo \ref{cap:maxwell}. 
+
+
+I potenziali introdotti in Sezione \ref{subsec:1potenziale} ben si prestano alla scrittura in forma debole delle equazioni di Maxwell. In questo modo, con riferimento al problema originario, le due equazioni \eqref{eq:2max1} e \eqref{eq:2max4} saranno soddisfatte in forma forte.
+
+Verrà inoltre da qui in avanti abbandonato il regime dinamico completo per focalizzare l'attenzione sui regimi ridotti adeguati alle analisi effettuate in questo lavoro.
+
+Infine, verranno utilizzati unicamente legami costitutivi isotropi, così da ridurre i tensori $\TT{\varepsilon}$ e $\TT{\mu}$ alle quantità scalari $\varepsilon$ e $\mu$.
+
+Come si è potuto osservare nel capitolo precedente, nelle due formulazioni ridotte \textit{MQS} e stazionaria le equazioni sono disaccoppiate nei due campi $\left\{\T{a},\phi\right\}$:
+\begin{equation}
+\left\{
+\label{eq:3potqss}
+\begin{aligned}
+\lap\left({\phi}\right) &= -\varepsilon^{-1} \rho\\
+-\lap\left(\T{a}\right) &= \mu\T{j}+\rot\left(\T{b_r}\right).
+\end{aligned}
+\right.
+\end{equation}
+I due regimi si differenziano nel recupero dei campi $\left\{\T{e},\T{b}\right\}$:
+
+\begin{equation}
+\label{eq:2recuperoqss}
+\begin{aligned}
+&\text{MQS}\\
+&\left\{
+\begin{aligned}
+\T{b}&=\rot \left(\T{a}\right)\\
+\T{e} &= -\grad\left(\phi\right) -\partial_t \T{a}
+\end{aligned}
+\right.
+\end{aligned}
+\qquad
+\begin{aligned}
+&\text{STAZIONARIO}\\
+&\left\{
+\begin{aligned}
+\T{b}&=\rot \left(\T{a}\right)\\
+\T{e} &= -\grad\left(\phi\right)
+\end{aligned}
+\right.
+\end{aligned}
+\end{equation}
+
+Durante la presentazione dei potenziali si è evidenziato l'utilizzo per i regimi ridotti della condizione di gabbia di Gauss \eqref{eq:2gaussgauge}. L'imposizione di tale condizione comporta l'interscambiabilità dei seguenti termini:
+\begin{equation}
+\label{eq:3rotrotlap}
+\rot\left[\rot\left(\T{a}\right)\right] = -\lap\left(\T{a}\right)
+\end{equation}
+all'interno della seconda delle equazioni \eqref{eq:3potqss}. 
+
+Verranno ora introdotti gli ambienti naturali per lo sviluppo della forma debole, per poi analizzare in dettaglio le formulazioni per il problema magnetico ed elettrico.
+
+\section{Spazi funzionali}
+
+Si definisca lo spazio
+\begin{equation}
+\label{eq:3L2}
+L_2\left(\TTTT{D}\right) := \left\{ u | \int_{\TTTT{D}} u^2 dv < \infty\right\},
+\end{equation}
+che fornito del prodotto scalare
+\begin{equation}
+\label{eq:3scaL2}
+\left(u,v\right)= \int_{\TTTT{D}} u\,v\, dv,
+\end{equation}
+costituisce uno spazio di Hilbert.
+
+Si richiamano ora le definizioni degli \textit{operatori differenziali generalizzati}:
+\begin{enumerate}
+
+
+\item $D_u = u'$ è detta \textit{derivata generalizzata} di $u \in L_2\left(\TTTT{D}\right)$ se 
+\begin{equation}
+\label{eq:3gen_der}
+\int_{\TTTT{D}}D_u w\, dv = - \int_{\TTTT{D}}u \,w' \, dv \qquad \forall w \in C_0^\infty\left(\bar{\TTTT{D}}\right),
+\end{equation}
+dove $\bar{\TTTT{D}}$ è un sottoinsieme compatto di $\TTTT{D}$ e costituisce il supporto delle \textit{test function} $w$. 
+\item $\T{g}=\grad\left(u\right)$ è detto \textit{gradiente generalizzato} di $u \in  L_2\left(\TTTT{D}\right)$ se
+\begin{equation}
+\label{eq:3gen_grad}
+\int_{\TTTT{D}}\T{g}\cdot \T{w}\, dv = - \int_{\TTTT{D}}u \,\dive\left(\T{w}\right) \, dv \qquad \forall \T{w} \in \left(C_0^\infty\left(\bar{\TTTT{D}}\right)\right)^3.
+\end{equation}
+\item $\T{r}=\rot\left(\T{u}\right)$ è detto \textit{rotore generalizzato} di $\T{u} \in  \left(L_2\left(\TTTT{D}\right)\right)^3$ se
+\begin{equation}
+\label{eq:3gen_rot}
+\int_{\TTTT{D}}\T{r}\cdot \T{w}\, dv =  \int_{\TTTT{D}}\T{u}\cdot \rot\left(\T{w}\right) \, dv \qquad \forall \T{w} \in \left(C_0^\infty\left(\bar{\TTTT{D}}\right)\right)^3.
+\end{equation}
+\item $d = \dive\left(\T{u}\right)$ è detta \textit{divergenza generalizzata} di $\T{u} \in  \left(L_2\left(\TTTT{D}\right)\right)^3$ se
+\begin{equation}
+\label{eq:3gen_div}
+\int_{\TTTT{D}}d\, w\, dv =  \int_{\TTTT{D}}\T{u}\cdot \grad\left(w\right) \, dv \qquad \forall w \in C_0^\infty\left(\bar{\TTTT{D}}\right).
+\end{equation}
+\end{enumerate}
+
+Si possono ora definire i seguenti spazi funzionali:
+\begin{eqnarray}
+\label{eq:3h1}
+H^1\left(\TTTT{D}\right) &:=&\left\{ w \in L_2\left(\TTTT{D}\right) | \grad\left( w\right) \in \left(L_2\left(\TTTT{D}\right)\right)^3\right\},\\
+\label{eq:3hcurl}
+H\left(\rot,\TTTT{D}\right) &:=&\left\{ \T{w} \in \left(L_2\left(\TTTT{D}\right)\right)^3 | \rot\left( \T{w}\right) \in \left(L_2\left(\TTTT{D}\right)\right)^3\right\},\\
+\label{eq:3hdiv}
+H\left(\dive,\TTTT{D}\right) &:=&\left\{ \T{w} \in \left(L_2\left(\TTTT{D}\right)\right)^3 | \dive\left( \T{w}\right) \in L_2\left(\TTTT{D}\right)\right\}.
+\end{eqnarray}
+
+A questi vengono associati i seguenti prodotti scalari:
+\begin{eqnarray}
+\label{eq:3scah1}
+\left(u,v\right)_1 &=& \int_{\TTTT{D}} \grad\left(u\right)\cdot\grad\left(v\right)dv+\left(u,v\right),\\
+\label{eq:3scahcurl}
+\left(\T{u},\T{v}\right)_{\rot} &=& \int_{\TTTT{D}}\rot\left(\T{u}\right)\cdot\rot\left(\T{v}\right)dv+\left(\T{u},\T{v}\right),\\
+\label{eq:3scahdiv}
+\left(\T{u},\T{v}\right)_{\dive} &=& \int_{\TTTT{D}}\dive\left(\T{u}\right)\dive\left(\T{v}\right)dv+\left(\T{u},\T{v}\right).
+\end{eqnarray}
+
+Gli spazi sopra definiti, se forniti delle norme associate ai rispettivi prodotti scalari,  sono spazi di Hilbert.
+
+\section{Forma debole per il problema magnetico}
+
+Si consideri l'equazione:
+\begin{equation}
+\rot\left[\rot\left(\T{a}\right)\right] = \mu\T{j}+\rot\left(\T{b_r}\right),
+\label{eq:3strong1}
+\end{equation}
+alla quale vengono associate le condizioni di interfaccia derivanti dalle equazioni \eqref{eq:4interface_b3} e \eqref{eq:4interface_h}:
+\begin{equation}
+\left\{
+\begin{aligned}
+&\Bigl\langle \rot\left(\T{a}\right)\times \T{n}\Bigr\rangle = -\mu\T{j_s} \\
+&\Bigl\langle \rot\left(\T{a}\right)\cdot \T{n}\Bigr\rangle = 0.
+\end{aligned}
+\right.
+\label{eq:3interface_a}
+\end{equation}
+
+Si noti che la seconda delle due condizioni al contorno è equivalente a
+\begin{equation}
+\label{eq:3interface_a2}
+\Bigl\langle \T{a}\times \T{n}\Bigr\rangle = 0.
+\end{equation}
+\\
+Sia ora $\T{a}\in H\left(\rot,\TTTT{D}\right)$; per ogni dominio $\TTTT{D}$ si integri l'equazione \eqref{eq:3strong1} e la prima delle condizioni al contorno \eqref{eq:3interface_a} e le si moltiplichino per una \textit{test function} vettoriale $\T{w} \in H\left(\rot,\TTTT{D}\right)$:
+\begin{align}
+\label{eq:3weak1}
+&\int_{\TTTT{D}}\T{w} \cdot \rot\left[\rot\left(\T{a}\right)\right] dv+\int_{\partial\TTTT{D}}\T{w}\cdot \left[\rot\left(\T{a}\right)\times\T{n}\right]ds= \nonumber\\
+&=\int_{\TTTT{D}}\T{w}\cdot\left[\mu\T{j}+rot\left(\T{b_r}\right)\right]dv+\int_{\partial\TTTT{D}}\T{w}\cdot \mu\T{j_s} ds.
+\end{align}
+
+Si sfrutti ora la relazione vettoriale
+\begin{equation}
+\dive\left[\T{u}\times \rot\left(\T{v}\right)\right] = \rot\left(\T{u}\right)\cdot \rot\left(\T{v}\right)-\T{u}\cdot \rot\left[rot\left(\T{v}\right)\right]
+\label{eq:3vectrel}
+\end{equation}
+per riscrivere l'equazione \eqref{eq:3weak1}:
+\begin{align}
+\label{eq:3weak2}
+&\int_{\TTTT{D}}\rot\left(\T{w}\right)\cdot \rot\left(\T{a}\right) dv-\int_{\TTTT{D}} \dive\left[\T{w}\times \rot\left(\T{a}\right)\right] dv + \nonumber\\
+&+\int_{\partial\TTTT{D}}\T{w}\cdot \left[\rot\left(\T{a}\right)\times\T{n}\right]ds= \nonumber\\
+&=\int_{\TTTT{D}}\T{w}\cdot\left[\mu\T{j}+\rot\left(\T{b_r}\right)\right]dv+\int_{\partial\TTTT{D}}\T{w}\cdot \mu\T{j_s} ds.
+\end{align}
+
+Si applichi ora il teorema di Gauss al termine di divergenza:
+\begin{align}
+\label{eq:3weak3}
+&\int_{\TTTT{D}}\rot\left(\T{w}\right)\cdot \rot\left(\T{a}\right) dv-\int_{\partial\TTTT{D}} \left[\T{w}\times \rot\left(\T{a}\right)\right]\cdot \T{n} ds + \nonumber\\
+&+\int_{\partial\TTTT{D}}\T{w}\cdot \left[\rot\left(\T{a}\right)\times\T{n}\right]ds= \nonumber\\
+&=\int_{\TTTT{D}}\T{w}\cdot\left[\mu\T{j}+\rot\left(\T{b_r}\right)\right]dv+\int_{\partial\TTTT{D}}\T{w}\cdot \mu\T{j_s} ds.
+\end{align}
+
+Si può dimostrare che i due termini in $\partial\TTTT{D}$ nel primo membro dell'Eq. \eqref{eq:3weak2} sono uguali citando l'identità vettoriale:
+\begin{equation}
+\label{eq:3vectidentity}
+\T{p} \cdot (\T{q} \times \T{r}) = \T{q} \cdot (\T{r} \times \T{p}) = \T{r} \cdot (\T{p} \times \T{q}).
+\end{equation}
+
+Si ottiene pertanto:
+$\forall \,\T{w} \in H(\rot,D)$:
+\begin{align}
+\label{eq:3weak4}
+&\int_{\TTTT{D}}\rot\left(\T{w}\right)\cdot \rot\left(\T{a}\right) dv
+= \nonumber\\
+&=\int_{\TTTT{D}}\T{w}\cdot\left[\mu\T{j}+\rot\left(\T{b_r}\right]\right)dv+\int_{\partial\TTTT{D}}\T{w}\cdot \mu\T{j_s} ds.
+\end{align}
+
+A questa forma debole deve essere incorporata la condizione di gabbia sul potenziale \eqref{eq:2gaussgauge} unitamente alla seconda delle condizioni al contorno \eqref{eq:3interface_a}; si introducano una \textit{test function}  $\psi$ e la corrispondente \textit{trial function} $\chi$ appartenenti allo spazio funzionale $H^1\left(\TTTT{D}\right)$. Si ha, sfruttando la definizione di divergenza generalizzata \eqref{eq:3gen_div}, l'ortogonalità del potenziale vettoriale rispetto ai gradienti:
+\begin{equation}
+\label{eq:3weakgauge}
+\int_{\TTTT{D}} \T{a} \cdot \grad\left(\psi\right) dv = 0 \qquad \forall \psi \in H^1\left(\TTTT{D}\right).
+\end{equation}
+
+ Si ottiene così la cosiddetta \textit{formulazione magnetostatica mista}, per la cui soluzione esistenza e unicità possono essere dimostrate mediante il Teorema di \textit{Brezzi} e il Teorema di \textit{Lax-Milgram}, omessi in questa trattazione \citep{zaglmayr_high_2006}.
+ 
+\begin{itemize}
+\item $\forall \T{w} \in H(\rot,\TTTT{D})$:
+\begin{align}
+\label{eq:3weak3_a}
+\int_{\TTTT{D}_i}\rot\left(\T{w}\right)\cdot \rot\left(\T{a}\right) dv +\int_{\TTTT{D}_i} \T{w} \cdot \grad \left(\chi\right) dv
+= \nonumber\\
+=\int_{\TTTT{D}_i}\T{w}\cdot\left[\mu\T{j}+\rot\left(\T{b_r}\right]\right)dv+\int_{\partial\TTTT{D}_i}\T{w}\cdot \mu\T{j_s} ds;
+\end{align}
+\item $\forall \psi \in H^1(\TTTT{D})$:
+\begin{align}
+\label{eq:3weak3_b}
+\int_{\TTTT{D}_i}\grad \left(\psi\right) \cdot \T{a}  dv = 0.
+\end{align}
+\end{itemize}
+
+Questa formulazione, per quanto efficacie ed utilizzabile, comporta la necessità dell'introduzione del campo scalare $\chi$ aggiuntivo. Oltre all'ovvio aumento delle dimensioni del sistema, questa formulazione può portare a cattivo condizionamento dello stesso e ad una lenta convergenza nell'utilizzo di solutori lineari. Viene qui  pertanto introdotta una formulazione mista \textit{regolarizzata} tramite il parametro scalare $k$
+
+$\forall \T{w} \in H(\rot,\TTTT{D})$: 
+\begin{align}
+\label{eq:3weak5}
+\int_{\TTTT{D}_i}\rot\left(\T{w}\right)\cdot \rot\left(\T{a}\right) dv +k\int_{\TTTT{D}_i} \T{w} \cdot \T{a} dv
+= \nonumber\\
+=\int_{\TTTT{D}_i}\T{w}\cdot\left[\mu\T{j}+\rot\left(\T{b_r}\right)\right]dv+\int_{\partial\TTTT{D}_i}\T{w}\cdot \mu\T{j_s} ds.
+\end{align}
+
+Può essere dimostrato che tale formulazione converge ad una soluzione unica $\T{a_k}$ e che tale soluzione coincide con quella del problema non regolarizzato per $k\rightarrow 0$. 
+
+\'E utile esprimere il parametro $k$ in relazione a $\mu_0$. In relazione al condizionamento del problema i seguenti valori sono stati sperimentati con successo: 
+
+\begin{equation}
+\label{eq:3 regpar}
+k = c \mu_0 , \qquad 1<= c <=1000
+\end{equation}
+\section{Forma debole per il problema elettrico}
+
+In analogia con quanto appena trattato per il potenziale magnetico, si imposta qui una struttura per la costruzione del problema in forma debole per il problema elettrico.
+
+ In Sezione \ref{subsec:1potenziale} si è visto come il campo elettrico possa essere scomposto nell'ambito del regime \textit{MQS} in una parte solenoidale $\T{e_f}$ e in una irrotazionale $\T{e_c}$. Confrontando le equazioni \eqref{eq:2e_coulomb}, \eqref{eq:2e_faraday} e \eqref{eq:2max12s} si può osservare come nel regime stazionario (elettrostatica) la parte solenoidale sia identicamente nulla. 
+
+La determinazione di $\T{e_f}$ deriva dall'analisi magnetica trattata nella sezione precedente. 
+
+Per ottenere $\T{e_c}$ occorre cercare una forma debole della prima delle equazioni \eqref{eq:3potqss}
+unitamente alle condizioni di interfaccia:
+
+\begin{equation}
+\left\{
+\begin{aligned}
+&\Bigl\langle \grad\left(\phi\right)\times \T{n}\Bigr\rangle = 0 \\
+&\Bigl\langle \grad\left(\phi\right)\cdot \T{n}\Bigr\rangle = \rho_s.
+\end{aligned}
+\right.
+\label{eq:3interface2_a}
+\end{equation}
+
+Sia ora $\phi \in H^1\left(\TTTT{D}\right)$; integrando l'Eq. \eqref{eq:3potqss} e la seconda delle condizioni al contorno \eqref{eq:3interface2_a} e moltiplicandole per una \textit{test function} $w \in H^1\left(\TTTT{D}\right)$ si ha :
+
+\begin{align}
+\label{eq:3weak_e1}
+&-\int_{\TTTT{D}}w \, \lap\left(\phi\right) dv+\int_{\partial\TTTT{D}}w \, \grad\left(\phi\right)\cdot \T{n}ds= \nonumber\\
+&=\varepsilon^{-1}\int_{\TTTT{D}}w\,\rho dv+\varepsilon^{-1}\int_{\partial\TTTT{D}}w\, \rho_s ds
+\end{align}
+
+\begin{eqnarray}
+\label{eq:3weak_e2}
+-\int_{\TTTT{D}}\dive\left[w \, \grad\left(\phi\right)\right]dv+ \int_{\TTTT{D}}\grad\left(w\right)\cdot \grad\left(\phi\right)dv+\\ +\int_{\partial\TTTT{D}}w \, \grad\left(\phi\right)\cdot \T{n}ds= \nonumber\\
+=\varepsilon^{-1}\int_{\TTTT{D}}w\,\rho dv+\varepsilon^{-1}\int_{\partial\TTTT{D}}w\, \rho_s ds.
+\end{eqnarray}
+
+Utilizzando il teorema di Gauss per il primo termine, si ha:
+\begin{eqnarray}
+\label{eq:3weak_e3}
+-\int_{\partial\TTTT{D}}w \, \grad\left(\phi\right)ds +\int_{\TTTT{D}}\grad\left(w\right)\cdot \grad\left(\phi\right)dv+\nonumber\\ +\int_{\partial\TTTT{D}}w \, \grad\left(\phi\right)\cdot \T{n}ds= \nonumber\\
+=\varepsilon^{-1}\int_{\TTTT{D}}w\,\rho dv+\varepsilon^{-1}\int_{\partial\TTTT{D}}w\, \rho_s ds,
+\end{eqnarray}
+da cui
+\begin{align}
+\label{eq:3weak_e4}
+&\int_{\TTTT{D}}\grad\left(w\right)\cdot \grad\left(\phi\right)dv = \nonumber\\
+&=\varepsilon^{-1}\int_{\TTTT{D}}w\,\rho dv+\varepsilon^{-1}\int_{\partial\TTTT{D}}w\, \rho_s ds.
+\end{align}
+
+Come per il problema magnetico, per $w$ e $\phi \in H^1\left(\TTTT{D}\right)$ è dimostrabile l'esistenza e unicità della soluzione. \'E inoltre implicitamente soddisfatta la prima delle \eqref{eq:3interface2_a} \citep{zaglmayr_high_2006}.
+
+\section{Conclusioni}
+
+Nelle precedenti sezioni sono state presentate le forme deboli utilizzate nel corso di questo lavoro. 
+
+L'esistenza e unicità delle soluzioni dei precedenti problemi sono garantite previa corretta impostazione del problema: il codice a elementi finiti deve pertanto utilizzare elementi conformi agli spazi funzionali presenti. I classici elementi finiti "lagrangiani" con  incognite nodali sono conformi agli spazi $H^1(\TTTT{D})$ e $H^(div, \TTTT{D})$, ma per la conformità ad $H(rot,\TTTT{D})$ si è reso necessario l'utilizzo di una diversa classe di elementi: gli elementi di spigolo (\textit{edge elements}). La principale proprietà di questi elementi è la possibilità di ottenere la formulazione di un problema la cui soluzione è richiesta conforme ad $H(rot,\TTTT{D})$ in termini di gradi di libertà esplicitamente indipendenti \citep{bossavit_computational_1998}. Fra gli elementi appartenenti a questa classe si è scelto di utilizzare gli elementi di Nédélec \citep{nedelec_acoustic_2001}. L'utilizzo di tali elementi, rispetto ad elementi nodali comporta grossi vantaggi per i problemi in forma debole presentati:
+\begin{itemize}
+\item Maggiore precisione a parità di griglia di calcolo
+\item Miglior condizionamento della matrice assemblata
+\end{itemize}
+
+Ne risulta una robusta convergenza della soluzione con metodi iterativi.
+
+
+In Tabella \ref{tab:tabella_campi} sono riassunti i risultati ottenuti in uno schema che mostra, per ciascun campo incognito, lo spazio funzionale adeguato e la classe di elementi utilizzata in questa analisi.
+
+\begin{table}[h]
+\centering
+\caption{Elenco degli spazi funzionali appropriati e degli elementi utilizzati per i campi in gioco}
+\footnotesize
+\label{tab:tabella_campi}
+\begin{tabular}{lcccc}
+\toprule
+Campo & Simbolo &Tipologia & Spazio funzionale & Elemento\\
+\midrule
+Campo elettrico & $\T{e}$ & vettoriale & $H(rot,\TTTT{D})$ & Nèdèlec\\
+Campo magnetico & $\T{h}$ & vettoriale & $H(rot,\TTTT{D})$ & Nèdèlec\\
+Induzione elettrica & $\T{d}$ & vettoriale & $H(div,\TTTT{D})$ & Lagrange\\
+Induzione magnetica & $\T{b}$ & vettoriale & $H(div,\TTTT{D})$ & Lagrange\\
+Potenziale elettrico & $\phi$ & vettoriale & $H^1(\TTTT{D})$ & Lagrange\\
+Potenziale magnetico & $\T{a}$ & vettoriale & $H(rot,\TTTT{D})$ & Nèdèlec\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Scaling}
+I calcoli sono stati eseguiti in alcuni casi in parallelo sfruttando diverse \textit{CPU} per l'assemblaggio e la risoluzione del sistema lineare. Si riportano in questa sezione i risultati dei test di scalabilità effettuati per la valutazione delle prestazioni del solutore in funzione del numero di \textit{core} utilizzati.
+
+\subsection{Strong scaling}
+Per \textit{strong scaling} si intende l'analisi del tempo di calcolo necessario al programma per risolvere un determinato sistema al variare del numero di core. In Figura \ref{fig:strongscaling} è riportato il grafico delle prestazioni ottenute su un problema di esempio di calcolo del campo magnetico attorno a due magneti permanenti. Il grafico mostra soltanto i tempi di calcolo in parallelo, che nel programma sono preceduti dalle operazioni di \textit{preprocessing} eseguite in seriale con un processore. In Tabella \ref{tab:strongscaling} sono elencati i dati del modello e i tempi ottenuti.
+
+\begin{table}[p]
+\centering
+\begin{minipage}{0.45\textwidth}
+\centering
+\tiny
+\begin{tikzpicture}
+    \begin{axis}[axis y line = left,
+                 axis x line = left,
+    		     width = \textwidth,
+    		     height = .3\textheight,
+                 xlabel = {cores}, 
+                 ylabel = {tempo (s)}]
+                 \addplot[mark = *]
+    file {./Immagini/BVP/strongscaling.dat};
+    \end{axis}
+\end{tikzpicture}
+\captionof{figure}{\textit{Strong scaling}}
+\label{fig:strongscaling}
+\end{minipage}
+\begin{minipage}{0.45\textwidth}
+\centering
+\tiny
+\caption{Dati del modello e tempi ottenuti per l'analisi di \textit{strong scaling}}
+\label{tab:strongscaling}
+\begin{tabular}{lc}
+\toprule
+Dati del modello&\\
+\midrule
+N. di vertici & 97609\\
+N. di celle & 576435\\
+\midrule
+Tempi di calcolo seriale\\
+\midrule
+Meshing (gmsh) & 60.9 s\\
+Conversione mesh & 28.9 s\\
+Preprocessing & 8.7 s\\
+\midrule
+Sistemi risolti&\\
+Sistema 1 & $675552\times675552$\\
+Sistema 2 & $2319483\times2319483$\\
+Sistema 3 & $878481\times878481$\\
+\midrule
+Tempi di calcolo\\
+\midrule
+1 \textit{core} & 231.3 s\\
+2 \textit{core} & 215.7 s\\
+4 \textit{core} & 153.3 s\\
+6 \textit{core} & 140.8 s\\
+\bottomrule
+\end{tabular}
+\end{minipage}
+\end{table}
+
+
+\subsection{Weak scaling}
+Per \textit{weak scaling} si intende l'analisi delle prestazioni misurando il tempo di calcolo al variare del numero di core assegnando a ciascun processore la stessa mole di calcolo (quindi raddoppiando le dimensioni del sistema quando raddoppia il numero di core). In Figura \ref{fig:weakscaling} è riportato il grafico delle prestazioni ottenute. In Tabella \ref{tab:weakscaling} sono elencati i dati del modello e i tempi ottenuti.
+\begin{table}[p]
+\centering
+\begin{minipage}{0.45\textwidth}
+\centering
+\tiny
+\begin{tikzpicture}
+    \begin{axis}[axis y line = left,
+                 axis x line = left,
+    		     width = \textwidth,
+    		     height = .3\textheight,
+                 xlabel = {cores}, 
+                 ylabel = {tempo (s)}]
+                 \addplot[mark = *]
+    file {./Immagini/BVP/weakscaling.dat};
+    \end{axis}
+\end{tikzpicture}
+\captionof{figure}{\textit{Weak scaling}}
+\label{fig:weakscaling}
+
+\end{minipage}
+\begin{minipage}{0.45\textwidth}
+\centering
+\tiny
+\begin{tabular}{lc}
+\toprule
+1 Processore&\\
+\midrule
+N. di vertici & 5243\\
+N. di celle & 30713\\
+Sistemi risolti&\\
+Sistema 1 & $36066\times36066$\\
+Sistema 2 & $123927\times123927$\\
+Sistema 3 & $47187\times47187$\\
+Tempo di calcolo & 10.0 s\\
+\midrule
+2 Processori&\\
+\midrule
+N. di vertici & 9686\\
+N. di celle & 56970\\
+Sistema 1 & $66827\times66827$\\
+Sistema 2 & $229539\times229539$\\
+Sistema 3 & $87174\times87174$\\
+Tempo di calcolo & 13.6862208843 s\\
+\midrule
+4 Processori&\\
+\midrule
+N. di vertici & 18757\\
+N. di celle & 110294\\
+Sistemi risolti&\\
+Sistema 1 & $129434\times129434$\\
+Sistema 2 & $444573\times444573$\\
+Sistema 3 & $444573\times444573$\\
+Tempo di calcolo & 25.1 s\\
+
+\bottomrule
+\end{tabular}
+\caption{Dati del modello e tempi ottenuti per l'analisi di \textit{weak scaling}}
+\footnotesize
+\label{tab:weakscaling}
+\end{minipage}
+\end{table}
+
+I risultati ottenuti non sono soddisfacenti; si ritiene possa essere opportuno estendere il lavoro sviluppando un'interfaccia per il solutore \textit{AMS} dell libreria \textit{hypre}, che rappresenta il primo solutore scalabile per problemi elettromagnetici \citep{AMS_hypre}.

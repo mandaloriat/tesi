@@ -1,0 +1,61 @@
+# Keep repository focused on thesis sources
+
+# Non-essential top-level material
+Documenti_Vari/
+Riferimenti/
+Dottorato/
+Miei_Appunti/
+
+# Binary/reference formats not needed for source versioning
+*.djvu
+*.fig
+*.xcf
+*.dvi
+
+# Mesh/CAD artifacts (often large, reproducible from scripts)
+*.msh
+*.mesh
+*.geo
+
+# Temporary/scientific tool outputs
+octave-workspace
+
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.lof
+*.log
+*.lot
+*.maf
+*.mtc
+*.mtc0
+*.mtc1
+*.mtc2
+*.mtc3
+*.mtc4
+*.mtc5
+*.mtc6
+*.mtc7
+*.mtc8
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+
+# Thesis generated outputs
+Tesi/Tesi.pdf
+Tesi/Tesi.dvi
+Tesi/Tesi.ps
+
+# Temp image area
+Tesi/Immagini/Temporanee/
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+*~
+*.swp

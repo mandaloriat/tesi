@@ -1,0 +1,58 @@
+% !TEX encoding = UTF-8 Unicode
+% !TEX TS-program = pdflatex
+
+%*******************************************************
+% Frontespizio
+%*******************************************************
+\begin{titlepage}
+\pdfbookmark[1]{Frontespizio}{Frontespizio}
+\changetext{}{}{}{((\paperwidth  - \textwidth) / 2) - \oddsidemargin - \hoffset - 1in}{}
+
+%\vspace*{\stretch{1}}
+\begin{center}
+\large
+\sffamily
+
+\includegraphics[width=6cm]{../Immagini/MaterialeInizialeFinale/Sigillo3}\\
+\bigskip{\textsc{
+\myFaculty \\
+\smallskip
+\myDepartment \\}}
+Corso di Laurea in \myCourse\\
+\vspace{1cm}
+
+{\huge\spacedlowsmallcaps{{\myTitle}} \\
+}
+\vspace{2cm}
+\begin{tabular} {cc}
+\parbox{0.6\textwidth}{
+	\begin{flushleft}
+		\large
+		Relatore: \myProf \\
+		Co-relatore: \mycoProf \\
+	\end{flushleft}
+}
+&
+\parbox{0.3\textwidth}{~}
+\end{tabular}
+
+\vspace{2cm}
+
+\begin{tabular} {cc}
+\parbox{0.3\textwidth}{~}
+&
+\parbox{0.6\textwidth}{
+	\begin{flushright}
+		\large
+		Tesi di laurea di:\\
+		\large
+		\myName, Matr. \myMat
+	\end{flushright}
+}
+\end{tabular}
+
+\vspace{3cm}
+
+{\myTime}
+\end{center}
+\end{titlepage}

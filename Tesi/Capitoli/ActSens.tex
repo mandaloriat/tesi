@@ -1,0 +1,1156 @@
+% !TEX encoding = UTF-8 Unicode
+% !TEX TS-program = pdflatex
+% !TEX root = ../Tesi.tex
+
+
+
+%************************************************
+\myChapter{Attuatori e sensori}
+%************************************************
+\label{chap:ActSens}
+Una grande svolta nell'utilizzo di specchi attivi nell'osservazione astronomica è stata la realizzazione di sistemi di controllo basati su attuatori e sensori \textit{contactless} applicati ad uno specchio sospeso, tenuto in equilibrio unicamente dall'azione attiva del sistema di controllo e dalla rigidezza del sostegno centrale.
+
+La configurazione ideale del sistema prevede la co-locazione di controlli e misure. La scelta del "dove e come acquisire e attuare" ha quindi come obiettivo l'avvicinamento dei due strumenti. Per questo ogni servomotore lineare è circondato da una corona circolare metallica che costituisce una delle due armature di un sensore capacitivo, mentre l'altra armatura è costituita da un rivestimento sullo specchio stesso. L'insieme di attuatore e sensore costituisce un'unità di controllo. Il numero di unità differisce da specchio a specchio; per gli specchi della generazione corrente si arriva anche ad alcune migliaia.
+
+In questo capitolo viene analizzata la configurazione del sistema di attuazione e lettura M4 in fase di sviluppo per i telescopi GMT e E-ELT. Il progetto e i dati utilizzati in questo lavoro sono stati concessi da \textit{Microgate} (\textcopyright\url{www.microgate.it}).
+
+\begin{figure}[htb]
+\centering
+\caption{Complessivo dell'unità di controllo M4}
+\label{fig:M4assembly}
+\begin{overpic}[width=\textwidth,]{M4_assembly}
+\put(7,33){Superficie}
+\put(9,31){specchio}
+\put(16,26){Pot}
+\put(9,13){Solenoide}
+\put(66,8){Bias-magnet}
+\put(75,22){Shell-magnet}
+\put(84,33){Condensatore}
+\put(75,31){Puk}
+\end{overpic}
+\end{figure}
+
+Il servomotore del sistema è costituito da tre elementi principali: 
+
+\begin{description}
+
+\item[Shell-Magnet] Si tratta del componente solidale allo specchio deformabile ed è l'elemento più complesso del servomotore. \'E composto da diversi magneti in lega di neodimio-ferro-boro (materiale non conduttore con permeabilità magnetica $\mu = 1.05 \mu_0$) a magnetizzazione residua nominale $\T{b_r} = 1.43$ T. La struttura è così composta:
+\begin{itemize}
+\item Un magnete centrale cilindrico con magnetizzazione assiale;
+\item Uno strato di colla dello spessore di 0.05 mm che riveste la superficie laterale del cilindro;
+\item Otto magneti a settore di corona circolare di 44° con magnetizzazione radiale secondo la bisettrice del settore, incollati alla superficie laterale del cilindro e separati fra loro da uno strato di colla di 1°;
+\item Un contenitore di alluminio (\textit{pot}) in cui è installato il complesso dei magneti.
+\item Un elemento di separazione tra il \textit{pot} e la superficie inferiore dello specchio (\textit{puk}).
+\end{itemize}
+
+\begin{figure}[htb]
+\centering
+\caption{Geometria dei componenti dello shell-magnet: \textit{core} (a), \textit{sectors} (b), \textit{pot} (c) (\textcopyright Microgate)}
+\label{fig:M4shellmagnet}
+\subfloat[][]{\includegraphics[width = .3\textwidth]{core}}\quad
+\subfloat[][]{\includegraphics[width = .3\textwidth]{petals}}\quad
+\subfloat[][]{\includegraphics[width = .3\textwidth]{pot}}
+\end{figure}
+
+\begin{SCtable}[1.][htb]
+\centering
+\footnotesize
+\caption{Dati geometrici del magnete solidale alla piastra}
+\label{tab:M4shellmagnetdata}
+\begin{tabular}{l}
+\toprule
+\textit{Core}\\
+\midrule
+\begin{tabular}{lc}
+Raggio &  3.85 mm\\
+Altezza &  4.2 mm\\
+Materiale & NdFeB N52\\
+\end{tabular}\\
+
+\toprule
+\textit{Settori}\\
+\midrule
+\begin{tabular}{lc}
+Raggio interno  & 3.9 mm\\
+Raggio esterno & 6.4 mm\\
+Altezza & 4.2 mm\\
+Materiale & NdFeB N52\\
+\end{tabular}\\
+\toprule
+\textit{Pot}\\
+\midrule
+\begin{tabular}{lcc}
+Raggio foro & 6.6 mm\\
+Raggio esterno & 12.9 mm\\
+Altezza & 2.5 mm\\
+Spessore & 0.2 mm\\
+Materiale & Al \\
+\end{tabular}\\
+\bottomrule
+\end{tabular}
+\end{SCtable}
+
+I dati geometrici delle varie parti sono elencati in Tabella \ref{tab:M4shellmagnetdata}, mentre il campo magnetico generato dal magnete permanente è mostrato in Figura \ref{fig:M4shellmagnet1}.
+
+\begin{figure}[htb]
+\centering
+\caption{Induzione magnetica dallo shell-magnet}
+\label{fig:M4shellmagnet1}
+\subfloat[][Sezione rispetto ad un diametro del magnete]{
+\includegraphics[width = .8\textwidth]{M4shellmagnet1}}
+\\
+\subfloat[][Dettaglio delle linee di flusso e della mesh]{
+\includegraphics[width = .8\textwidth]{M4shellmagnet2}}
+\end{figure}
+
+\item[Coil] Unico elemento attivo dell'attuatore, è costituito da un solenoide multi-strato in rame le cui caratteristiche sono mostrate in Tabella~\ref{tab:M4coildata}.
+
+\begin{figure}[htb]
+\centering
+\caption{Induzione magnetica generata dal solenoide}
+\label{fig:M4coil}
+\includegraphics[width = .6\textwidth]{M4coil}
+\end{figure}
+
+Questo elemento è solidale al reference-body e posizionato al di sotto dello shell-magnet, ad una distanza di 0.2 mm \textit{face to face}. Il campo attorno all'induttore è mostrato in Figura \ref{fig:M4coil}.
+
+\begin{SCtable}[1.][htb]
+\centering
+\footnotesize
+\caption{Dati geometrici del solenoide}
+\label{tab:M4coildata}
+\begin{tabular}{l}
+\toprule
+\textit{Coil}\\
+\midrule
+\begin{tabular}{lc}
+Raggio interno &  2.2 mm\\
+Raggio esterno &  7 mm\\
+Altezza &  3.2 mm\\
+Numero di spire & 240\\
+Materiale & Cu\\
+\end{tabular}\\
+\bottomrule
+\end{tabular}
+\end{SCtable}
+
+\item[Bias-Magnet] Scopo di questo elemento è evitare il collasso del sistema se il sistema di controllo viene spento. Si tratta di un magnete tubolare in lega di neodimio-ferro-boro con induzione residua assiale di intensità $\T{b_r} = 1.17$ T. \'E solidale al reference-body e viene posizionato al di sotto dello shell-magnet e del coil in modo che le due magnetizzazioni residue siano parallele e concordi. La distanza \textit{face to face} tra il magnete di bias e quello sullo specchio è di 6.1 mm.
+
+\begin{figure}[htb]
+\centering
+\caption{Induzione magnetica generata dal bias-magnet (sezione rispetto ad un diametro del magnete)}
+\label{fig:M4biasmagnet}
+\includegraphics[width = .6\textwidth]{M4biasmagnet}
+\end{figure}
+
+I dati geometrici sul bias-magnet sono riportati in Tabella \ref{tab:M4biasmagnetdata} mentre il 
+campo generato è mostrato in Figura \ref{fig:M4biasmagnet}.
+
+\begin{SCtable}[1.][htb]
+\centering
+\footnotesize
+\caption{Dati geometrici del magnete di bias}
+\label{tab:M4biasmagnetdata}
+\begin{tabular}{l}
+\toprule
+\textit{Bias}\\
+\midrule
+\begin{tabular}{lc}
+Raggio interno &  0.75 mm\\
+Raggio esterno &  1.5 mm\\
+Altezza &  2 mm\\
+Materiale & NdFeB N52\\
+\end{tabular}\\
+\bottomrule
+\end{tabular}
+\end{SCtable}
+\end{description}
+
+Come si può osservare, il campo magnetico del solenoide è completamente sovrastato da quello generato dai magneti permanenti. Infatti, anche per un valore di corrente $i = 10^6$ A l'induttore genera un campo magnetico $\T{b}$ dell'ordine di $10^{-2}$ T, mentre i magneti possiedono un campo dell'ordine di 1 T. 
+
+Pertanto un'analisi in cui i campi di tutti gli elementi siano analizzati contemporaneamente comporta malcondizionamento della matrice assemblata e difficoltà nella convergenza della soluzione. Inoltre non è necessario il calcolo delle forze scambiate fra tutti gli elementi: dovendo calcolare la forza che agisce sul solenoide o sul magnete di bias, entrambi solidali al reference-body, solo il contributo del magnete solidale allo specchio è da considerare.
+
+Le analisi saranno quindi condotte calcolando i contributi di forze e momenti considerando coppie di componenti, e sfruttando il principio della sovrapposizione degli effetti per ottenere le forze globali.
+
+In questo modo una variazione di progetto sulla geometria o posizione di uno dei componenti non comporta la necessità di una nuova iterazione di tutte le analisi, ma solo di una sua parte.\\
+
+I momenti sono stati calcolati rispetto al punto $P$ di intersezione fra l'asse dello shell magnet e il piano medio della piastra deformabile. In questo modo il momento ottenuto lavora direttamente per la rotazione del piano medio dello specchio. La distanza complessiva del polo dalla faccia superiore del magnete di shell è:
+\begin{equation}
+\label{eq:6polo}
+d_P = t_{pot}+t_{puk}+\frac{t_{shell}}{2} = \left(0.2+2+\frac{1.95}{2}\right)\text{mm} = 3.175~\text{mm}.
+\end{equation}
+Nel caso in cui lo spessore della piastra o del puk varino, è necessario calcolare i contributi di trasporto sul nuovo polo.\\
+
+Infine si riporta la struttura del sensore capacitivo: le due armature sono costituite da \textit{coating} aurei il cui spessore è circa 1$\mu$m. L'armatura solidale al reference-body è formata da una corona circolare e da uno svaso conico mentre l'altra è costituita dal rivestimento dello specchio stesso (Figura \ref{fig:m4condsection}). La distanza nominale fra le armature è di 90$\mu$m. Le caratteristiche della geometria del condensatore sono mostrate in Tabella \ref{tab:M4conddatageom}.
+
+\begin{figure}[htb]
+\centering
+\caption{Sezione del sensore capacitivo}
+\label{fig:m4condsection}
+\includegraphics[width = \textwidth]{m4condsection}
+\end{figure}
+
+\begin{SCtable}[1.][htb]
+\centering
+\footnotesize
+\caption{Dati geometrici del condensatore}
+\label{tab:M4conddatageom}
+\begin{tabular}{l}
+\toprule
+\begin{tabular}{lc}
+Raggio interno &  14.5 mm\\
+Raggio esterno &  11 mm\\
+Distanza fra le armature &  90 $\mu$m\\
+Ampiezza svaso & 1.5 mm\\
+Altezza svaso & 1.5 mm\\
+Materiale & Au\\
+\end{tabular}\\
+\bottomrule
+\end{tabular}
+\end{SCtable}
+
+\section{Forze e coppie shell-magnet -- bias-magnet}
+Una prima analisi riguarda il calcolo di forze e coppie scambiate tra i due magneti permanenti. Questi devono esercitare una forza sufficiente a garantire che, se il sistema di controllo viene spento, la piastra deformabile sia attratta verso il reference-body e vi resti unita stabilmente.
+
+ La configurazione operativa prevede una distanza fra i due magneti di 6.1 mm, sufficiente ad effettuare il calcolo delle forze tramite il metodo della superficie di Maxwell. \'E stata svolta l'analisi per diverse forme e dimensioni. Una buona robustezza rispetto alle variabili di analisi (dimensione della mesh, dimensione della superficie, dimensione del dominio) è stata raggiunta utilizzando come superfici due calotte emisferiche di raggio $r_{Maxwell} = 15$ mm in modo che il piano che separa le due parti fosse equidistante dai due magneti.
+Le caratteristiche del modello sono elencate in Tabella \ref{tab:M4shellbiasdata}. 
+
+\begin{SCtable}[1.][htb]
+\centering
+\caption{Modello per il calcolo di forze tra i magneti di shell e di bias}
+\label{tab:M4shellbiasdata}
+\begin{tabular}{lc}
+\toprule
+Raggio dominio esterno &  60 mm\\
+Raggio superficie di Maxwell &  15 mm\\
+Numero di nodi &  235607\\
+Numero di celle & 1398259\\
+\bottomrule
+\end{tabular}
+\end{SCtable}
+
+In Tabella \ref{tab:M4shellbiasforces1} sono mostrate le forze e coppie agenti sul magnete dello specchio per la configurazione nominale. Si può osservare che la forza è verticale e porta i due corpi ad avvicinarsi: le altre due componenti hanno valori che possono essere attribuiti a disomogeneità nella costruzione della griglia di calcolo. Risulta nullo anche il momento complessivo fra i due magneti. Sulla base dei risultati ottenuti si è scelto di considerare nulle forze al di sotto di 2 mN e coppie sotto la soglia di 0.02 N~mm. 
+ 
+
+\begin{SCtable}[2.][htb]
+\centering
+\caption{Forze e coppie agenti sullo shell-magnet nella configurazione nominale}
+\label{tab:M4shellbiasforces1}
+\begin{tabular}{lc}
+\toprule
+$F_x$ & 0.15 mN\\
+$F_y$ & 1.39 mN\\
+$F_z$ & -250.74 mN\\
+$M_x$ & 0.010 N~mm\\
+$M_y$ & 0.009 N~mm\\
+$M_z$ & 0.001 N~mm\\
+\bottomrule
+\end{tabular}
+\end{SCtable}
+
+Dopo aver ottenuto le forze e coppie per la configurazione nominale ne è stata valutata la sensibilità alla variazione di configurazione tramite il seguente ciclo:
+\begin{itemize}
+\item Variazione di un parametro tra distanza longitudinale, offset trasversale e angolo relativo (la rotazione è stata effettuata rispetto allo stesso polo usato per il calcolo dei momenti);
+\item Rigenerazione della griglia di calcolo;
+\item Soluzione del problema ed estrapolazione delle forze;
+\end{itemize}
+
+\'E stato valutato l'andamento rispetto alle seguenti variazioni della configurazione dello shell-magnet:
+\begin{enumerate}
+\item scostamento longitudinale: $dz = \left[-0.1,0.1\right]$ mm
+\item offset trasversale: $dx = \left[-0.1,0.1\right]$ mm
+\item rotazione rispetto al polo $P$: $\alpha_y = \left[-5,5\right]$°
+\end{enumerate}
+
+\begin{figure}
+\footnotesize
+\centering
+\subfloat[][]{
+ \begin{tikzpicture}
+    \begin{axis}[axis y line = left,
+                 grid = major,
+                 axis x line = left,
+    		     width = .4\textwidth,
+    		     height = .15\textheight,
+                 ylabel = {Forze (mN)}, 
+                 xlabel = {Distanza verticale $z$ (mm)},
+                 xmin = 6,
+                 xmax = 6.25,
+                 ymin = -5.,
+                 ymax = 15]
+    \addplot[mark = triangle*, samples = 200., smooth]
+    file {./Immagini/ActSens/m4shellbiasfxz.dat};
+    \addplot[mark = square*, samples = 200, smooth]
+    file {./Immagini/ActSens/m4shellbiasfyz.dat};
+    \legend{$f_x$\\$f_y$\\}
+    \end{axis}
+    \end{tikzpicture}
+    }
+\subfloat[][]{
+ \begin{tikzpicture}
+    \begin{axis}[axis y line = left,
+                 grid = major,
+                 axis x line = left,
+    		     width = .4\textwidth,
+    		     height = .15\textheight,
+                 ylabel = {Forze (mN)}, 
+                 xlabel = {Distanza verticale $z$ (mm)},
+                 xmin = 6,
+                 xmax = 6.25,
+                 ymin = -300.,
+                 ymax = -200]
+        \addplot[mark = *, samples = 200, smooth]
+    file {./Immagini/ActSens/m4shellbiasfzz.dat};
+    \legend{$f_z$\\}
+    \end{axis}
+    \end{tikzpicture}
+    }\\
+\subfloat[][]{
+ \begin{tikzpicture}
+    \begin{axis}[axis y line = left,
+                 axis x line = left,
+                 grid = major,
+    		     width = .8\textwidth,
+    		     height = .15\textheight,
+                 ylabel = {Momenti (N~mm)}, 
+                 xlabel = {Distanza verticale $z$ (mm)},
+				 xmin = 6,
+				 xmax = 6.25,
+                 ymin = -.02, 
+                 ymax = .07]
+    \addplot[mark = triangle*, samples = 200, smooth]
+    file {./Immagini/ActSens/m4shellbiasmxz.dat};
+    \addplot[mark = square*, samples = 200, smooth]
+    file {./Immagini/ActSens/m4shellbiasmyz.dat};
+    \addplot[mark = *, samples = 200, smooth]
+    file {./Immagini/ActSens/m4shellbiasmzz.dat};
+    \legend{$m_x$\\$m_y$\\$m_z$\\}
+    \end{axis}
+    \end{tikzpicture}
+    }
+\caption{Accoppiamento shell-bias: andamento di forze e coppie rispetto a $z$}
+\label{fig:M4shellbiasplots1}
+\end{figure}
+
+\begin{figure}
+\footnotesize
+\centering
+\subfloat[][]{
+ \begin{tikzpicture}
+    \begin{axis}[axis y line = left,
+                 grid = major,
+                 axis x line = left,
+    		     width = .4\textwidth,
+    		     height = .15\textheight,
+                 ylabel = {Forze (mN)}, 
+                 xlabel = {Offset orizzontale $dx$ (mm)},
+                 xmin = -.1,
+                 xmax = .15,
+                 ymin = -5.,
+                 ymax = 15]
+    \addplot[mark = triangle*, samples = 200., smooth]
+    file {./Immagini/ActSens/m4shellbiasfxx.dat};
+    \addplot[mark = square*, samples = 200, smooth]
+    file {./Immagini/ActSens/m4shellbiasfyx.dat};
+    \legend{$f_x$\\$f_y$\\}
+    \end{axis}
+    \end{tikzpicture}
+    }
+\subfloat[][]{
+ \begin{tikzpicture}
+    \begin{axis}[axis y line = left,
+                 grid = major,
+                 axis x line = left,
+    		     width = .4\textwidth,
+    		     height = .15\textheight,
+                 ylabel = {Forze (mN)}, 
+                 xlabel = {Offset orizzontale $dx$ (mm)},
+                 xmin = -.1,
+                 xmax = .15,
+                 ymin = -260.,
+                 ymax = -240]
+        \addplot[mark = *, samples = 200, smooth]
+    file {./Immagini/ActSens/m4shellbiasfzx.dat};
+    \legend{$f_z$\\}
+    \end{axis}
+    \end{tikzpicture}
+    }\\
+\subfloat[][]{
+ \begin{tikzpicture}
+    \begin{axis}[axis y line = left,
+                 axis x line = left,
+                 legend pos=south east,
+                 grid = major,
+    		     width = .8\textwidth,
+    		     height = .15\textheight,
+                 ylabel = {Momenti (N~mm)}, 
+                 xlabel = {Offset orizzontale $dx$ (mm)},
+				 xmin = -.1,
+				 xmax = .15,
+                 ymin = -.15, 
+                 ymax = .05]
+    \addplot[mark = triangle*, samples = 200, smooth]
+    file {./Immagini/ActSens/m4shellbiasmxx.dat};
+    \addplot[mark = square*, samples = 200, smooth]
+    file {./Immagini/ActSens/m4shellbiasmyx.dat};
+    \addplot[mark = *, samples = 200, smooth]
+    file {./Immagini/ActSens/m4shellbiasmzx.dat};
+    \legend{$m_x$\\$m_y$\\$m_z$\\}
+    \end{axis}
+    \end{tikzpicture}
+    }
+\caption{Accoppiamento shell-bias: andamento di forze e coppie rispetto a $x$}
+\label{fig:M4shellbiasplots2}
+\end{figure}
+
+
+\begin{figure}
+\footnotesize
+\centering
+\subfloat[][]{
+ \begin{tikzpicture}
+    \begin{axis}[axis y line = left,
+                 grid = major,
+                 axis x line = left,
+    		     width = .4\textwidth,
+    		     height = .15\textheight,
+                 ylabel = {Forze (mN)}, 
+                 xlabel = {Angolo $\alpha_y$ (°)},
+                 xmin = -6,
+                 xmax = 6.5,
+                 ymin = -10.,
+                 ymax = 20]
+    \addplot[mark = triangle*, samples = 200., smooth]
+    file {./Immagini/ActSens/m4shellbiasfxa.dat};
+    \addplot[mark = square*, samples = 200, smooth]
+    file {./Immagini/ActSens/m4shellbiasfya.dat};
+    \legend{$f_x$\\$f_y$\\}
+    \end{axis}
+    \end{tikzpicture}
+    }
+\subfloat[][]{
+ \begin{tikzpicture}
+    \begin{axis}[axis y line = left,
+                 grid = major,
+                 axis x line = left,
+    		     width = .4\textwidth,
+    		     height = .15\textheight,
+                 ylabel = {Forze (mN)}, 
+                 xlabel = {Angolo $\alpha_y$ (°)},
+                 xmin = -6,
+                 xmax = 6.5,
+                 ymin = -260.,
+                 ymax = -200]
+        \addplot[mark = *, samples = 200, smooth]
+    file {./Immagini/ActSens/m4shellbiasfza.dat};
+    \legend{$f_z$\\}
+    \end{axis}
+    \end{tikzpicture}
+    }\\
+\subfloat[][]{
+ \begin{tikzpicture}
+    \begin{axis}[axis y line = left,
+                 axis x line = left,
+                 grid = major,
+    		     width = .8\textwidth,
+    		     height = .15\textheight,
+                 ylabel = {Momenti (N~mm)}, 
+                 xlabel = {Angolo $\alpha_y$ (°)},
+				 xmin = -6,
+				 xmax = 6.5,
+                 ymin = -.05, 
+                 ymax = .15]
+    \addplot[mark = triangle*, samples = 200, smooth]
+    file {./Immagini/ActSens/m4shellbiasmxa.dat};
+    \addplot[mark = square*, samples = 200, smooth]
+    file {./Immagini/ActSens/m4shellbiasmya.dat};
+    \addplot[mark = *, samples = 200, smooth]
+    file {./Immagini/ActSens/m4shellbiasmza.dat};
+    \legend{$m_x$\\$m_y$\\$m_z$\\}
+    \end{axis}
+    \end{tikzpicture}
+    }
+\caption{Accoppiamento shell-bias: andamento di forze e coppie rispetto a $\theta_y$}
+\label{fig:M4shellbiasplots3}
+\end{figure}
+
+Nelle Figure \ref{fig:M4shellbiasplots1}--\ref{fig:M4shellbiasplots3} sono mostrati i risultati ottenuti per le configurazioni considerate. Osservando i grafici si può osservare l'andamento delle forze e se ne può estrapolare la pendenza rispetto alla configurazione di riferimento.
+
+Approssimando come serie di Taylor al primo ordine le forze e coppie in funzione degli scostamenti e angoli di rotazione si può scrivere:
+\begin{equation}
+\label{eq:6fc_xzalfa}
+\begin{array}{cc}
+\T{f} = 
+\left\{\begin{array}{c}
+F_x\\
+F_y\\
+F_z\\
+C_x\\
+C_y\\
+C_z\end{array}\right\}
+&
+\T{x} = 
+\left\{\begin{array}{c}
+x\\
+y\\
+z\\
+\alpha_x\\
+\alpha_y\\
+\alpha_z\end{array}\right\}
+\end{array}
+\end{equation}
+\begin{equation}
+\label{eq:6fc_xzalfa2}
+\T{f} = \T{f_0}+\TT{E}\T{x},
+\end{equation}
+dove:
+\begin{equation}
+\label{eq:6fc_xzalfa3}
+\TT{E} = \left[
+\de_x\T{f}~|~\de_y\T{f}~|~\de_z\T{f}~|~ \de_{\alpha_x}\T{f}~|~\de_{\alpha_y}\T{f}~|~\de_{\alpha_z}\T{f}\right].
+\end{equation}
+
+Dalle analisi effettuate, considerando la simmetria assiale, si possono estrapolare i seguenti dati:
+\begin{equation}
+\label{eq:6fc_xzalfa5}
+\nonumber
+\footnotesize
+\begin{array}{c}
+\T{f_0} = 
+\left\{\begin{array}{c}
+0~\text{mN}\\
+0~\text{mN}\\
+-250~\text{mN}\\
+0~\text{Nmm}\\
+0~\text{Nmm}\\
+0~\text{Nmm}
+\end{array}\right\}
+\\~\\
+\TT{E} = 
+\left[\begin{array}{cccccc}
+-48.6~\frac{\text{mN}}{\text{mm}} &
+0~\frac{\text{mN}}{\text{mm}} &
+0~\frac{\text{mN}}{\text{mm}} &
+0~\frac{\text{mN}}{\text{rad}} &
+-76.9~\frac{\text{mN}}{\text{rad}} &
+0~\frac{\text{mN}}{\text{rad}}\\
+
+0~\frac{\text{mN}}{\text{mm}} &
+-48.6~\frac{\text{mN}}{\text{mm}} &
+0~\frac{\text{mN}}{\text{mm}} &
+76.9~\frac{\text{mN}}{\text{rad}} &
+0~\frac{\text{mN}}{\text{rad}} &
+0~\frac{\text{mN}}{\text{rad}}\\
+
+
+0~\frac{\text{mN}}{\text{mm}} &
+0~\frac{\text{mN}}{\text{mm}} &
+87.4~\frac{\text{mN}}{\text{mm}} &
+0~\frac{\text{mN}}{\text{rad}} &
+0~\frac{\text{mN}}{\text{rad}} &
+0~\frac{\text{mN}}{\text{rad}}\\
+
+0~\text{N} &
+-0.27~\text{N} &
+0~\text{N} &
+-0.07~\frac{\text{Nmm}}{\text{rad}} &
+0~\frac{\text{Nmm}}{\text{rad}} &
+0~\frac{\text{Nmm}}{\text{rad}}\\
+
+0.27~\text{N} &
+0~\text{N} &
+0~\text{N} &
+0~\frac{\text{Nmm}}{\text{rad}} &
+-0.07~\frac{\text{Nmm}}{\text{rad}} &
+0~\frac{\text{Nmm}}{\text{rad}}\\
+
+0~\text{N} &
+0~\text{N} &
+0~\text{N} &
+0~\frac{\text{Nmm}}{\text{rad}} &
+0~\frac{\text{Nmm}}{\text{rad}} &
+0~\frac{\text{Nmm}}{\text{rad}}
+\end{array}\right]
+
+\end{array}
+\end{equation}
+
+Si può osservare la natura quasi diagonale della matrice, con i soli accoppiamenti non trascurabili dovuti all'interazione fra traslazioni laterali e rotazioni. Tale interazione è dovuta in parte proprio alla scelta del polo, poiché una rotazione infinitesima $d\theta_y$ comporta un movimento $dx$ secondo la direzione della rotazione. Nelle analisi strutturali successive verrà trascurato il moto laterale dello specchio, in quanto disaccoppiato e di entità ampiamente trascurabile. Gli effetti delle tolleranze di assemblaggio e degli scorrimenti laterali dovuti alla gravità verranno modellati attraverso una distribuzione di \textit{offset} laterali opportunamente generata. L'introduzione di questo particolare effetto porterà ad un accoppiamento non trascurabile tra gradi di libertà della piastra.
+
+Si nota dai termini diagonali che il contributo del magnete di bias è stabilizzante per tutti i gradi di libertà eccezion fatta per lo spostamento trasversale, in cui è garantita l'adesione tra lo specchio e il reference-body in caso di spegnimento del sistema di controllo se la forza $F_{z_0}$ moltiplicata per il numero di attuatori è maggiore del peso complessivo dello specchio strumentato.
+
+\section{Forze e coppie shell-magnet -- coil}
+\label{sec:shellcoilforces}
+Si prosegue analizzando forze e coppie scambiate tra il magnete solidale allo specchio e il solenoide. Per il calcolo è stato utilizzata la formula di Lorentz, attivando il campo del magnete permanente e integrando la quantità $\T{f_L} = \T{b}\times\T{j}$ nel volume occupato dal solenoide. Per l'analisi si è considerata $j$ positiva in senso antiorario. Le forze sono calcolate per $i  = 1$ A, e rappresentano i coefficienti $K_m$, costanti di proporzionalità tra corrente impressa e forze generate dall'attuatore.\\
+
+La configurazione operativa prevede una distanza fra i due magneti di 0.2 mm, distanza che non ha permesso l'utilizzo del metodo della superficie di Maxwell e che ha limitato l'escursione angolare relativa dei due elementi a $0.8$°. 
+Le caratteristiche del modello sono elencate in Tabella \ref{tab:M4shellcoildata}. 
+
+\begin{SCtable}[1.][htb]
+\centering
+\caption{Modello preparato per il calcolo di forze tra il magnete di shell e il solenoide}
+\label{tab:M4shellcoildata}
+\begin{tabular}{lc}
+\toprule
+Raggio dominio esterno &  100 mm\\
+Numero di nodi &  224207\\
+Numero di celle & 1330900\\
+\bottomrule
+\end{tabular}
+\end{SCtable}
+
+In Tabella \ref{tab:M4shellcoilforces1} sono mostrate le forze e coppie agenti sul magnete dello specchio per la configurazione nominale. Si può osservare che anche in questo caso la forza è interamente verticale, e che la precisione raggiunta è molto maggiore (ove possibile, infatti, è sempre consigliabile calcolare le forze utilizzando direttamente la formula di Lorentz).
+
+Anche in questo caso è stata verificata la stabilità del risultato ottenuto rispetto a variazioni di dimensione del dominio di calcolo e dimensione degli elementi.
+
+\begin{SCtable}[2.][htb]
+\centering
+\caption{Forze e coppie agenti sul coil nella configurazione nominale}
+\label{tab:M4shellcoilforces1}
+\begin{tabular}{lc}
+\toprule
+$F_x$ & -0.04 mN\\
+$F_y$ & -0.03 mN\\
+$F_z$ & -1945.62 mN\\
+$M_x$ & 0.00 N~mm\\
+$M_y$ & 0.00 N~mm\\
+$M_z$ & 0.00 N~mm\\
+\bottomrule
+\end{tabular}
+\end{SCtable}
+
+\'E stato valutato l'andamento rispetto alle seguenti variazioni della configurazione dello shell-magnet:
+\begin{enumerate}
+\item scostamento longitudinale: $dz = \left[-0.1,0.1\right]$ mm
+\item offset trasversale: $dx = \left[-0.1,0.1\right]$ mm
+\item rotazione rispetto al polo $P$: $\alpha_y = \left[-0.8,0.8\right]$°
+\end{enumerate}
+
+
+\begin{figure}
+\footnotesize
+\centering
+\subfloat[][]{
+ \begin{tikzpicture}
+    \begin{axis}[axis y line = left,
+                 grid = major,
+                 axis x line = left,
+    		     width = .4\textwidth,
+    		     height = .15\textheight,
+                 ylabel = {Forze (mN)}, 
+                 xlabel = {Distanza verticale $z$ (mm)},
+                 xmin = .1,
+                 xmax = .35,
+                 ymin = -3.,
+                 ymax = 5]
+    \addplot[mark = triangle*, samples = 200., smooth]
+    file {./Immagini/ActSens/m4shellcoilfxz.dat};
+    \addplot[mark = square*, samples = 200, smooth]
+    file {./Immagini/ActSens/m4shellcoilfyz.dat};
+    \legend{$f_x$\\$f_y$\\}
+    \end{axis}
+    \end{tikzpicture}
+    }
+\subfloat[][]{
+ \begin{tikzpicture}
+    \begin{axis}[axis y line = left,
+                 grid = major,
+                 axis x line = left,
+                 legend pos=south east,
+    		     width = .4\textwidth,
+    		     height = .15\textheight,
+                 ylabel = {Forze (mN)}, 
+                 xlabel = {Distanza verticale $z$ (mm)},
+                 xmin = .1,
+                 xmax = .35,
+                 ymin = -2100.,
+                 ymax = -1800]
+        \addplot[mark = *, samples = 200, smooth]
+    file {./Immagini/ActSens/m4shellcoilfzz.dat};
+    \legend{$f_z$\\}
+    \end{axis}
+    \end{tikzpicture}
+    }\\
+\subfloat[][]{
+ \begin{tikzpicture}
+    \begin{axis}[axis y line = left,
+                 axis x line = left,
+                 grid = major,
+    		     width = .8\textwidth,
+    		     height = .15\textheight,
+                 ylabel = {Momenti (N~mm)}, 
+                 xlabel = {Distanza verticale $z$ (mm)},
+				 xmin = .1,
+				 xmax = .35,
+                 ymin = -.03, 
+                 ymax = .06]
+    \addplot[mark = triangle*, samples = 200, smooth]
+    file {./Immagini/ActSens/m4shellcoilmxz.dat};
+    \addplot[mark = square*, samples = 200, smooth]
+    file {./Immagini/ActSens/m4shellcoilmyz.dat};
+    \addplot[mark = *, samples = 200, smooth]
+    file {./Immagini/ActSens/m4shellcoilmzz.dat};
+    \legend{$m_x$\\$m_y$\\$m_z$\\}
+    \end{axis}
+    \end{tikzpicture}
+    }
+\caption{Accoppiamento shell-coil: andamento di forze e coppie rispetto a $z$}
+\label{fig:M4shellcoilplots1}
+\end{figure}
+
+\begin{figure}
+\footnotesize
+\centering
+\subfloat[][]{
+ \begin{tikzpicture}
+    \begin{axis}[axis y line = left,
+                 grid = major,
+                 axis x line = left,
+    		     width = .4\textwidth,
+    		     height = .15\textheight,
+                 ylabel = {Forze (mN)}, 
+                 xlabel = {Offset orizzontale $dx$ (mm)},
+                 xmin = -.1,
+                 xmax = .15,
+                 ymin = -40,
+                 ymax = 60]
+    \addplot[mark = triangle*, samples = 200., smooth]
+    file {./Immagini/ActSens/m4shellcoilfxx.dat};
+    \addplot[mark = square*, samples = 200, smooth]
+    file {./Immagini/ActSens/m4shellcoilfyx.dat};
+    \legend{$f_x$\\$f_y$\\}
+    \end{axis}
+    \end{tikzpicture}
+    }
+\subfloat[][]{
+ \begin{tikzpicture}
+    \begin{axis}[axis y line = left,
+                 grid = major,
+                 axis x line = left,
+    		     width = .4\textwidth,
+    		     height = .15\textheight,
+                 ylabel = {Forze (mN)}, 
+                 xlabel = {Offset orizzontale $dx$ (mm)},
+                 xmin = -.1,
+                 xmax = .15,
+                 ymin = -2000.,
+                 ymax = -1900]
+        \addplot[mark = *, samples = 200, smooth]
+    file {./Immagini/ActSens/m4shellcoilfzx.dat};
+    \legend{$f_z$\\}
+    \end{axis}
+    \end{tikzpicture}
+    }\\
+\subfloat[][]{
+ \begin{tikzpicture}
+    \begin{axis}[axis y line = left,
+                 axis x line = left,
+                 legend pos=south east,
+                 grid = major,
+    		     width = .8\textwidth,
+    		     height = .15\textheight,
+                 ylabel = {Momenti (N~mm)}, 
+                 xlabel = {Offset orizzontale $dx$ (mm)},
+				 xmin = -.1,
+				 xmax = .15,
+                 ymin = -.6, 
+                 ymax = .4]
+    \addplot[mark = triangle*, samples = 200, smooth]
+    file {./Immagini/ActSens/m4shellcoilmxx.dat};
+    \addplot[mark = square*, samples = 200, smooth]
+    file {./Immagini/ActSens/m4shellcoilmyx.dat};
+    \addplot[mark = *, samples = 200, smooth]
+    file {./Immagini/ActSens/m4shellcoilmzx.dat};
+    \legend{$m_x$\\$m_y$\\$m_z$\\}
+    \end{axis}
+    \end{tikzpicture}
+    }
+\caption{Accoppiamento shell-coil: andamento di forze e coppie rispetto a $x$}
+\label{fig:M4shellcoilplots2}
+\end{figure}
+
+
+\begin{figure}
+\footnotesize
+\centering
+\subfloat[][]{
+ \begin{tikzpicture}
+    \begin{axis}[axis y line = left,
+                 grid = major,
+                 axis x line = left,
+    		     width = .4\textwidth,
+    		     height = .15\textheight,
+                 ylabel = {Forze (mN)}, 
+                 xlabel = {Angolo $\alpha_y$ (°)},
+                 xmin = -.8,
+                 xmax = 1,
+                 ymin = -7.,
+                 ymax = 13]
+    \addplot[mark = triangle*, samples = 200., smooth]
+    file {./Immagini/ActSens/m4shellcoilfxa.dat};
+    \addplot[mark = square*, samples = 200, smooth]
+    file {./Immagini/ActSens/m4shellcoilfya.dat};
+    \legend{$f_x$\\$f_y$\\}
+    \end{axis}
+    \end{tikzpicture}
+    }
+\subfloat[][]{
+ \begin{tikzpicture}
+    \begin{axis}[axis y line = left,
+                 grid = major,
+                 axis x line = left,
+    		     width = .4\textwidth,
+    		     height = .15\textheight,
+                 ylabel = {Forze (mN)}, 
+                 xlabel = {Angolo $\alpha_y$ (°)},
+                 xmin = -.8,
+                 xmax = 1,
+                 ymin = -2000.,
+                 ymax = -1900]
+        \addplot[mark = *, samples = 200, smooth]
+    file {./Immagini/ActSens/m4shellcoilfza.dat};
+    \legend{$f_z$\\}
+    \end{axis}
+    \end{tikzpicture}
+    }\\
+\subfloat[][]{
+ \begin{tikzpicture}
+    \begin{axis}[axis y line = left,
+                 axis x line = left,
+                 grid = major,
+    		     width = .8\textwidth,
+    		     height = .15\textheight,
+                 ylabel = {Momenti (N~mm)}, 
+                 xlabel = {Angolo $\alpha_y$ (°)},
+				 xmin = -.8,
+				 xmax = 1,
+                 ymin = -.02, 
+                 ymax = .06]
+    \addplot[mark = triangle*, samples = 200, smooth]
+    file {./Immagini/ActSens/m4shellcoilmxa.dat};
+    \addplot[mark = square*, samples = 200, smooth]
+    file {./Immagini/ActSens/m4shellcoilmya.dat};
+    \addplot[ mark = *, samples = 200, smooth]
+    file {./Immagini/ActSens/m4shellcoilmza.dat};
+    \legend{$m_x$\\$m_y$\\$m_z$\\}
+    \end{axis}
+    \end{tikzpicture}
+    }
+\caption{Accoppiamento shell-coil: andamento di forze e coppie rispetto a $\theta_y$}
+\label{fig:M4shellcoilplots3}
+\end{figure}
+
+Nelle Figure \ref{fig:M4shellcoilplots1}--\ref{fig:M4shellcoilplots3} sono mostrati i risultati ottenuti.
+Dalle elaborazioni sui dati riportati si ottiene:
+\begin{equation}
+\label{eq:6fc_xzalfa6}
+\nonumber
+\footnotesize
+\begin{array}{c}
+\T{f_0} = 
+\left\{\begin{array}{c}
+0~\text{mN}\\
+0~\text{mN}\\
+-1945.6~\text{mN}\\
+0~\text{Nmm}\\
+0~\text{Nmm}\\
+0~\text{Nmm}
+\end{array}\right\}
+\\~\\
+\TT{E} = 
+\left[\begin{array}{cccccc}
+-261.2~\frac{\text{mN}}{\text{mm}} &
+0~\frac{\text{mN}}{\text{mm}} &
+0~\frac{\text{mN}}{\text{mm}} &
+0~\frac{\text{mN}}{\text{rad}} &
+-367.7~\frac{\text{mN}}{\text{rad}} &
+0~\frac{\text{mN}}{\text{rad}}\\
+
+0~\frac{\text{mN}}{\text{mm}} &
+-261.2~\frac{\text{mN}}{\text{mm}} &
+0~\frac{\text{mN}}{\text{mm}} &
+367.7~\frac{\text{mN}}{\text{rad}} &
+0~\frac{\text{mN}}{\text{rad}} &
+0~\frac{\text{mN}}{\text{rad}}\\
+
+
+0~\frac{\text{mN}}{\text{mm}} &
+0~\frac{\text{mN}}{\text{mm}} &
+822.4~\frac{\text{mN}}{\text{mm}} &
+0~\frac{\text{mN}}{\text{rad}} &
+0~\frac{\text{mN}}{\text{rad}} &
+0~\frac{\text{mN}}{\text{rad}}\\
+
+0~\text{N} &
+-1.39~\text{N} &
+0~\text{N} &
+-0.597~\frac{\text{Nmm}}{\text{rad}} &
+0~\frac{\text{Nmm}}{\text{rad}} &
+0~\frac{\text{Nmm}}{\text{rad}}\\
+
+1.39~\text{N} &
+0~\text{N} &
+0~\text{N} &
+0~\frac{\text{Nmm}}{\text{rad}} &
+-0.597~\frac{\text{Nmm}}{\text{rad}} &
+0~\frac{\text{Nmm}}{\text{rad}}\\
+
+0~\text{N} &
+0~\text{N} &
+0~\text{N} &
+0~\frac{\text{Nmm}}{\text{rad}} &
+0~\frac{\text{Nmm}}{\text{rad}} &
+0~\frac{\text{Nmm}}{\text{rad}}
+\end{array}\right]
+
+\end{array}
+\end{equation}
+
+Si osserva che la matrice presenta la stessa struttura della precedente, con valori che sovrastano quelli del bias-magnet. 
+
+Per entrambi i magneti la struttura della matrice è quasi diagonale e l'unico accoppiamento è portato dall'interazione del moto trasversale con la rotazione della piastra, in gran parte dovuto alla distanza tra il magnete di shell e la linea media della piastra.
+
+\section{Auto-induttanza del solenoide}
+Si riporta in questa sezione il risultato ottenuto per il calcolo dell'auto-induttanza del solenoide. Questo è stato successivamente confrontato con una formula semi-empirica per solenoidi multi-strato \citep{lee_integrated_2009}:\\
+\begin{equation}
+\label{eq:6wheeler2}
+L = \frac{0.8 a^2N^2}{6a+9h+10c},
+\end{equation}
+dove
+\begin{equation}
+\label{eq:6wheeler3}
+\left\{ \begin{array}{ll}
+a = \frac{r_{est}+r_{int}}{2},&\text{misurato in pollici}\\
+c = r_{est}-r_{int}, & \text{misurato in pollici}\\
+L & \text{misurata in $\mu$ H}.\end{array}\right.
+\end{equation}
+
+Le caratteristiche del modello d'analisi sono mostrate in Tabella \ref{tab:M4coildatabis}.
+
+\begin{SCtable}[1.][htb]
+\centering
+\caption{Modello preparato per il calcolo dell'induttanza}
+\label{tab:M4coildatabis}
+\begin{tabular}{lc}
+\toprule
+Raggio dominio esterno & 20 mm\\
+Numero di nodi &  27641\\
+Numero di celle & 159482\\
+\bottomrule
+\end{tabular}
+\end{SCtable}
+
+In Tabella \ref{tab:M4coilind} è mostrato il risultato ottenuto, in confronto con il risultato analitico. Si riscontra un ottimo grado di correlazione tra i due risultati.
+
+
+
+\begin{table}[htb]
+\centering
+\caption{Auto-induttanza del solenoide: confronto fra risultato numerico e analitico}
+\label{tab:M4coilind}
+\begin{tabular}{lc}
+\toprule
+$L_{computed}$ & 368.29 $\mu$H\\
+$L_{analytic}$ & 367.70 $\mu$H\\
+Errore & 0.16\%\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Flusso concatenato del magnete di shell}
+\label{sec:concflux}
+Come ultima analisi degli elementi del gruppo di attuazione, è stato valutato il flusso generato dallo shell-magnet concatenato al circuito del solenoide.\\
+
+ La variazione di questa quantità nell'unità di tempo genera una controtensione sul circuito di attuazione. Per un generico circuito $RL$ in cui l'induttore sia soggetto ad un campo magnetico esterno l'equazione dinamica è \citep{furlani_permanent_2001}:
+\begin{align}
+\label{eq:6concflux1}
+V &= L\de_t i  +Ri + \de_t\Phi\left(\T{b_{ext}}\right)\nonumber\\
+ ~& = L\de_t i  +Ri + \de_t\Lambda.
+\end{align}
+
+Il flusso concatenato $\Lambda$ è dovuto, in questo caso, al movimento relativo fra il magnete permanente e l'elemento di attuazione. Si può allora scrivere, identificando con $x$ il grado di libertà del movimento relativo:
+\begin{align}
+\label{eq:6concflux2}
+V& = L\de_t i  +Ri + \de_t\Lambda\nonumber\\
+& = L\de_t i  +Ri + \de_t\Lambda\left(x\left(t\right)\right)\nonumber\\
+& = L\de_t i  +Ri + \de_x\Lambda\left(x\right) \de_tx\nonumber\\
+& = L\de_t i  +Ri + K_i \de_tx.
+\end{align}
+
+La quantità $K_i$ è in ambito lineare uguale al coefficiente $K_m$ calcolato in Sezione \ref{sec:shellcoilforces}. Il modello utilizzato per questa analisi è il medesimo utilizzato per il calcolo delle forze scambiate tra i due elementi.
+
+Rispetto alle stesse variazioni di configurazione relativa è stato valutato il flusso mediante la prima delle due tecniche di calcolo dell'induttanza mostrate in Sezione \ref{sec:induttanza}. In Figura \ref{fig:M4indflux} è mostrato l'andamento del flusso concatenato in funzione della variazione di configurazione. Come si può osservare, la sensibilità del flusso concatenato $\Lambda$ rispetto a movimenti trasversali e rotazioni è pressoché nulla e soltanto la variazione verticale porta un contributo non trascurabile.
+
+
+\begin{figure}[htb]
+\subfloat[][]{
+ \begin{tikzpicture}
+    \begin{axis}[axis y line = left,
+                 grid = major,
+                 axis x line = left,
+    		     width = .8\textwidth,
+    		     height = .2\textheight,
+                 ylabel = {Flusso $\left(\frac{\text{V}}{\text{m/s}}\right)$}, 
+                 xlabel = {Distanza verticale $z$ (mm)},
+                 xmin = 0.1,
+                 xmax = 0.35,
+				 ymax = 0.006,
+				 ymin = 0.0052]
+    \addplot[black,  mark = triangle*,samples = 200., smooth]
+    file {./Immagini/ActSens/m4shellcoilfluxz.dat};
+    \end{axis}
+    \end{tikzpicture}
+    }\\
+\subfloat[][]{
+ \begin{tikzpicture}
+    \begin{axis}[axis y line = left,
+                 axis x line = left,
+                 grid = major,
+    		     width = .4\textwidth,
+    		     height = .2\textheight,
+                 ylabel = {Flusso $\left(\frac{\text{V}}{\text{m/s}}\right)$}, 
+                 xlabel = {Offset orizzontale $dx$ (mm)},
+				 xmin = -0.1,
+				 xmax = 0.135,
+				 ymax = 0.006,
+				 ymin = 0.0052]
+    \addplot[black, mark = triangle*,samples = 200, smooth]
+    file {./Immagini/ActSens/m4shellcoilfluxx.dat};
+    \end{axis}
+    \end{tikzpicture}
+    }
+\subfloat[][]{
+ \begin{tikzpicture}
+    \begin{axis}[axis y line = left,
+                 legend pos=south east,
+                 grid = major,
+                 axis x line = left,
+    		     width = .4\textwidth,
+    		     height = .2\textheight,
+                 ylabel = {Flusso $\left(\frac{\text{V}}{\text{m/s}}\right)$}, 
+                 xlabel = {Angolo $\alpha_y$ (°)},
+                 xmin = -1,
+                 xmax = 1,
+				 ymax = 0.006,
+				 ymin = 0.0052]
+        \addplot[black, mark = triangle*, samples = 200, smooth]
+    file {./Immagini/ActSens/m4shellcoilfluxa.dat};
+    \end{axis}
+    \end{tikzpicture}
+    }
+\caption{Accoppiamento shell-coil: andamento del flusso esterno concatenato al solenoide rispetto a scostamenti trasversali (a), rotazioni (b) e scostamenti verticali (c)}
+\label{fig:M4indflux}
+\end{figure}
+Dai dati raccolti si ottiene:
+
+
+\begin{equation}
+\label{eq:6concflux3}
+K_i = \de_z \Lambda = -2026 \text{ mN/A}.
+\end{equation}
+
+\section{Capacità del sensore}
+\begin{figure}[hb]
+\centering
+\caption{Sezione del condensatore ruotata e traslata}
+\label{fig:6condsection}
+\begin{tikzpicture}
+%\tdplotdrawarc[curve]{(O)}{\R}{0}{360}{}{}
+\draw{(0,.5) -- (7.25,.5)};
+\draw[red!60!black,dashed] {(5.5,0) -- (7.25,0)};
+\draw[red!60!black,dashed] {(5.5,0) -- (4.75,-.75)};
+\tdplotdrawarc[->,white!60!black]{(6.125,0)}{.4}{-45}{65}{}{}
+
+\draw[white!40!black] {(5.5,.1) -- (7.25,0.2)};
+\draw[white!40!black] {(5.5,0.1) -- (4.89,-.7)};
+\draw {(5.5,-.5) -- (7.25,-.4)};
+\draw {(5.5,-.5) -- (4.89,-1.3)};
+\draw[->, white!60!black] {(7.35,0.2) -- (7.35,-.4)};
+\draw[dashdotted]{(0,-.5) -- (0,1.5)};
+\tdplotdrawarc[fill = black]{(0,1.25)}{0.05}{0}{360}{}{}
+\draw (0,1.25) node[right] {$P$}; %label
+\draw (6.65,0.3) node[] {$\gamma$}; %label
+\draw (7.35,-.1) node[right] {$w$}; %label
+
+%\draw (\R*.4,0,0) node[right] {$S$}; %label
+%\draw (0, \R, 0) node[right] {$\partial S$}; %label
+\end{tikzpicture}
+\end{figure}
+Per l'analisi della capacità del sensore due approcci sono stati valutati; un primo approccio è l'analisi completa tridimensionale. Considerando la variazione di configurazione dei due pezzi e valutando il campo ad ogni soluzione (analogamente a quanto svolto nelle altre analisi in questo capitolo). Tuttavia la ridotta distanza fra le due armature non permette variazioni di configurazione tali da ottenere una buona stima della variazione della capacità, specialmente rispetto alla variazione di angolo relativo tra le due armature. Per questo, in aggiunta ad una analisi in 3D limitata alla configurazione nominale, è stato implementato un metodo ibrido analitico-numerico basato sull'analisi bidimensionale assialsimmetrica di una sezione del condensatore. Considerando la sezione illustrata in Figura \ref{fig:6condsection}, una delle due armature è ruotata (rispetto al piano medio della piastra) di un angolo  $\gamma$ o traslata di una quantità $w$ rispetto alla configurazione nominale, e viene calcolato il contributo infinitesimo di capacità $dC \left(w,\gamma\right)$. Tale valore è stato poi integrato considerando la configurazione che si vuole analizzare per l'elemento completo:
+\begin{equation}
+\label{eq:6m4cap2d1}
+C = \int_0^{2\pi} dC\left(w\left(\theta\right), \gamma\left(\theta\right)\right) d\theta.
+\end{equation}
+
+Considerando pure traslazioni, si ha:
+\begin{equation}
+\label{eq:6m4cap2d2}
+C(w') = \int_0^{2\pi} dC\left(w = w', \gamma = 0\right) d\theta = 2\pi dC \left(w'\right).
+\end{equation}
+
+Considerando soltanto rotazioni, invece:
+\begin{equation}
+\label{eq:6m4cap2d3}
+C\left(\gamma'\right) = \int_0^{2\pi} dC\left(w = 0, \gamma = \gamma' \cos\left(\theta\right)\right) d\theta.
+\end{equation}
+In particolare, è stato effettuato il calcolo per:
+\begin{itemize}
+\item $-0.08\text{mm}<w<0.098\text{mm}$;\\
+\item $-0.1\degree<\alpha<0.1\degree$.
+\end{itemize}
+
+\begin{figure}[htb]
+\centering
+\caption{Dettaglio della soluzione: campo elettrico $\T{e}$ sulla sezione del condensatore in configurazione nominale}
+\label{fig:M4condfield}
+\includegraphics[width = \textwidth]{M4condfield}
+\end{figure}
+Il metodo descritto presenta alcune limitazioni: infatti si trascura intrinsecamente qualsiasi contributo tangenziale (fuori dal piano delle sezioni). In questa analisi l'effetto è trascurabile poiché anche in presenza di un angolo relativo la soluzione resta prevalentemente nel piano delle sezioni. 
+
+Si aggiunge che questa tecnica di calcolo si presta anche alla valutazione della variazione di capacità rispetto ad effetti di ordine superiore (ad esempio effetti di deformazione di una delle due armature) che in questa sede non sono stati analizzati.
+In Figura \ref{fig:M4condsol} è mostrato l'andamento della capacità totale ottenuta per configurazioni considerate. La possibilità di effettuare una analisi bidimensionale ha permesso la ripetizione della simulazione per decine di configurazioni.
+
+
+\begin{figure}[htb]
+\subfloat[][]{
+ \begin{tikzpicture}
+    \begin{axis}[
+    		     width = .8\textwidth,
+    		     height = .2\textheight,
+                 ylabel = {Capacità $\left(\text{pF}\right)$}, 
+                 xlabel = {Distanza verticale $z$ ($\mu$m)}]
+    \addplot[black,  mark = triangle*]
+    file {./Immagini/ActSens/m4condz.dat};
+    \end{axis}
+    \end{tikzpicture}
+    }\\
+\subfloat[][]{
+ \begin{tikzpicture}
+    \begin{axis}[
+    		     width = .8\textwidth,
+    		     height = .2\textheight,
+    		     ymin = 31.884,
+                 ymax = 31.887,
+                 ylabel = {Capacità $\left(\text{pF}\right)$}, 
+                 xlabel = {Angolo $\alpha$ (°)}]
+        \addplot[black, mark = triangle*]
+    file {./Immagini/ActSens/m4conda.dat};
+    \end{axis}
+    \end{tikzpicture}
+    }
+\caption{Capacità del condensatore: andamento rispetto a scostamenti verticali (a) e rotazioni (b)}
+\label{fig:M4condsol}
+\end{figure}
+
+L'interpolazione dei risultati ha portato alle seguenti espressioni interpolanti, utilizzabili per la simulazione della lettura nelle analisi successive:
+\begin{equation}
+\label{eq:6m4cap2d4}
+\left\{
+\begin{array}{l}
+C_0 = 0.0319 \\
+C(z) = \left(-298.8 z^2+369.6 z+0.5\right)^{-1}\\
+C(\alpha) = 0.09\cdot\alpha^2+0.0319,
+\end{array}
+\right.
+\end{equation}
+dove la capacità è espressa in nF, la distanza in mm, l'angolo in radianti. 

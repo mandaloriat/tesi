@@ -1,0 +1,1367 @@
+% !TEX encoding = UTF-8 Unicode
+% !TEX TS-program = pdflatex
+% !TEX root = ../Tesi.tex
+
+
+
+%************************************************
+\myChapter{Simulazione della risposta del sistema}
+%************************************************
+\label{chap:simulations}
+
+Al fine di valutare la corretta implementazione della struttura, dello specchio e del sistema di controllo, il sistema viene considerato dapprima come "ideale": non sono introdotti disturbi e comportamenti non lineari, non viene simulato il reale comportamento di attuatori e sensori, l'implementazione è analogica e si suppone di avere a disposizione in ogni istante la vera misura di posizione e velocità nei punti di misura per la controreazione.
+
+Successivamente verranno inseriti gli effetti che costituiscono fonte di disturbo e imprecisione, così da valutare le differenze nella risposta del sistema. 
+
+\section{Test del sistema}
+Per un primo test sono  state utilizzate come riferimenti alcune forme definite dai polinomi di Zernike. Questi polinomi, ortogonali fra loro, rappresentano gli elementi di una base per la rappresentazione delle aberrazioni dei fronti d'onda \citep{shannon_applied_1992}.
+In un sistema di coordinate polari, possono essere costruiti grazie alle seguenti relazioni:
+\begin{equation}
+\label{eq:8zernike1}
+Z_n^m(\rho,\theta) = 
+\left\{
+\begin{array}{c}
+N_n^mR_n^{|m|}(\rho)\cos(m\theta) \qquad \text{per } \begin{array}{l}m \ge 0\\ 0\le\rho\le
+ 1\\ 0\le \theta\le 2\pi\end{array}\\
+-N_n^mR_n^{|m|}(\rho)\sin(m\theta) \qquad \text{per } \begin{array}{l}m<0\\ 0\le\rho\le1\\ 0\le \theta\le 2\pi\end{array}
+\end{array}\right.
+\end{equation}
+\begin{equation}
+\label{eq:8zernike2}
+N_n^m = \sqrt{\frac{2(n+1)}{1+\delta_{m=0}}}
+\end{equation}
+\begin{equation}
+\label{eq:8zernike3}
+R_n^{|m|}(\rho) = \sum_{s = 0}^{(n-|m|)/2}\frac{(-1)^s(n-s)!}{s!\left[\left(n+|m|\right)/2-s\right]\left[\left(n-|m|\right)/2-s\right]}\rho^{n-2s}
+\end{equation}
+Nelle formule riportate $n$ assume valori interi non negativi, $m$ varia da $-n$ a $n$ con passo 2 e $\delta_{m=0}$ è il delta di Kronecker e vale 1 per $m=0$ e $0$ per $m\neq 0$.
+
+In Tabella \ref{tab:8zernike} sono riportati i primi 10 polinomi, nei quali $n$ varia da $0$ a 3.
+\begin{table}[htb]
+\centering
+\caption{Elenco dei primi polinomi di Zernike}
+\label{tab:8zernike}
+\begin{tabular}{cccl}
+\toprule
+$No.$ & $n$ & $m$ & $Z_n^m(\rho,\theta)$\\
+\midrule
+0 & 0 &  0  & 1\\
+1 & 1 &  -1 & $2\rho\sin(\theta)$\\
+2 & 1 &  1  & $2\rho\cos(\theta)$\\
+3 & 2 &  -2 & $\sqrt{6}\rho^2\sin(2\theta)$\\
+4 & 2 &  0  & $\sqrt{3}\left(2\rho^2-1\right)$\\
+5 & 2 &  2  & $\sqrt{6}\rho^2\cos(2\theta)$\\
+6 & 3 &  -3 & $\sqrt{8}\rho^3\sin(3\theta)$\\
+7 & 3 &  -1 & $\sqrt{8}\left(3\rho^3-2\rho\right)\sin(\theta)$\\
+8 & 3 &  1  & $\sqrt{8}\left(3\rho^3-2\rho\right)\cos(\theta)$\\
+9 & 3 &  3  & $\sqrt{8}\rho^3\cos(3\theta)$\\
+&&&\vdots\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+\begin{figure}[htb]
+\footnotesize
+\centering
+\includegraphics[width = .7\textwidth]{controlz0}
+ \begin{tikzpicture}
+    \begin{axis}[legend pos = south east,
+    			 axis y line = left,
+                 axis x line = left,
+    		     width = .8\textwidth,
+    		     height = .3\textheight,
+                 ylabel = {$w$ (nm)}, 
+                 xlabel = {$t$ (ms)}]
+    \addplot[dashed, very thin, samples = 200., smooth]
+    file {./Immagini/Simulations/0ref1.dat};
+    \addplot[very thin, samples = 200, smooth]
+    file {./Immagini/Simulations/0u1.dat};
+    \addplot[dotted, samples = 200., smooth]
+    file {./Immagini/Simulations/0ref1-10.dat};
+    \addplot[dotted, samples = 200., smooth]
+    file {./Immagini/Simulations/0ref1+10.dat};
+    \legend{$r$\\$w$\\$\pm 10$ nm\\}
+    \end{axis}
+    \end{tikzpicture}
+
+ \begin{tikzpicture}
+    \begin{axis}[legend pos = south east,
+    		     axis y line = left,
+                 axis x line = left,
+    		     width = .8\textwidth,
+    		     height = .3\textheight,
+                 ylabel = {$w$ (nm)}, 
+                 xlabel = {$t$ (ms)}]
+    \addplot[very thin, dashed,  samples = 200., smooth]
+    file {./Immagini/Simulations/0ref2.dat};
+    \addplot[very thin, samples = 200, smooth]
+    file {./Immagini/Simulations/0u2.dat};
+    \addplot[dotted,  samples = 200, smooth]
+    file {./Immagini/Simulations/0ref2-10.dat};
+    \addplot[dotted,  samples = 200., smooth]
+    file {./Immagini/Simulations/0ref2+10.dat};        
+    \legend{$r$\\$w$\\$\pm 10$ nm\\}
+    \end{axis}
+    \end{tikzpicture}
+
+\caption{Storia temporale dello spostamento in due punti di controllo per il polinomio di Zernike n° $0$}
+\label{fig:8storyzernike0}
+\end{figure}
+
+
+\begin{figure}[htb]
+\footnotesize
+\centering
+\includegraphics[width = .7\textwidth]{controlz3}
+
+ \begin{tikzpicture}
+    \begin{axis}[legend pos = south east,
+    			 axis y line = left,
+                 axis x line = left,
+    		     width = .8\textwidth,
+    		     height = .3\textheight,
+                 ylabel = {$w$ (nm)}, 
+                 xlabel = {$t$ (ms)}]
+    \addplot[dashed, very thin, samples = 200., smooth]
+    file {./Immagini/Simulations/3ref1.dat};
+    \addplot[very thin, samples = 200, smooth]
+    file {./Immagini/Simulations/3u1.dat};
+    \addplot[dotted,  samples = 200., smooth]
+    file {./Immagini/Simulations/3ref1-10.dat};
+    \addplot[dotted,  samples = 200., smooth]
+    file {./Immagini/Simulations/3ref1+10.dat};
+    \legend{$r$\\$w$\\$\pm 10$ nm\\}
+    \end{axis}
+    \end{tikzpicture}
+
+ \begin{tikzpicture}
+    \begin{axis}[legend pos = north east,
+    			 axis y line = left,
+                 axis x line = left,
+    		     width = .8\textwidth,
+    		     height = .3\textheight,
+                 ylabel = {$w$ (nm)}, 
+                 xlabel = {$t$ (ms)}]
+    \addplot[very thin, dashed,  samples = 200., smooth]
+    file {./Immagini/Simulations/3ref2.dat};
+    \addplot[very thin, samples = 200, smooth]
+    file {./Immagini/Simulations/3u2.dat};
+    \addplot[dotted, samples = 200, smooth]
+    file {./Immagini/Simulations/3ref2-10.dat};
+    \addplot[dotted,  samples = 200., smooth]
+    file {./Immagini/Simulations/3ref2+10.dat};        
+    \legend{$r$\\$w$\\$\pm 10$ nm\\}
+    \end{axis}
+    \end{tikzpicture}
+\caption{Storia temporale dello spostamento in due punti di controllo per il 3° polinomio di Zernike}
+\label{fig:8storyzernike3}
+\end{figure}
+
+\begin{figure}[htb]
+\footnotesize
+\centering
+\includegraphics[width = .7\textwidth]{controlz9}
+
+ \begin{tikzpicture}
+    \begin{axis}[legend pos = north east,
+    			 axis y line = left,
+                 axis x line = left,
+    		     width = .8\textwidth,
+    		     height = .2\textheight,
+                 ylabel = {$w$ (nm)}, 
+                 xlabel = {$t$ (ms)}]
+    \addplot[dashed, very thin, samples = 200., smooth]
+    file {./Immagini/Simulations/9ref1.dat};
+    \addplot[very thin, samples = 200, smooth]
+    file {./Immagini/Simulations/9u1.dat};
+    \addplot[dotted, samples = 200., smooth]
+    file {./Immagini/Simulations/9ref1-10.dat};
+    \addplot[dotted, samples = 200., smooth]
+    file {./Immagini/Simulations/9ref1+10.dat};
+    \legend{$r$\\$w$\\$\pm 10$ nm\\}
+    \end{axis}
+    \end{tikzpicture}
+
+ \begin{tikzpicture}
+    \begin{axis}[legend pos = south east,
+                 axis y line = left,
+                 axis x line = left,
+    		     width = .8\textwidth,
+    		     height = .3\textheight,
+                 ylabel = {$w$ (nm)}, 
+                 xlabel = {$t$ (ms)}]
+    \addplot[very thin, dashed,  samples = 200., smooth]
+    file {./Immagini/Simulations/9ref2.dat};
+    \addplot[very thin, samples = 200, smooth]
+    file {./Immagini/Simulations/9u2.dat};
+    \addplot[dotted, samples = 200, smooth]
+    file {./Immagini/Simulations/9ref2-10.dat};
+    \addplot[dotted, samples = 200., smooth]
+    file {./Immagini/Simulations/9ref2+10.dat};        
+    \legend{$r$\\$w$\\$\pm 10$ nm\\}
+    \end{axis}
+    \end{tikzpicture}
+\caption{Storia temporale dello spostamento in due punti di controllo per il 9° polinomio di Zernike}
+\label{fig:8storyzernike9}
+\end{figure}
+
+\begin{figure}[htb]
+\footnotesize
+\centering
+\includegraphics[width = .7\textwidth]{controlz12}
+
+ \begin{tikzpicture}
+    \begin{axis}[legend pos = south east,
+    			 axis y line = left,
+                 axis x line = left,
+    		     width = .8\textwidth,
+    		     height = .3\textheight,
+                 ylabel = {$w$ (nm)}, 
+                 xlabel = {$t$ (ms)}]
+    \addplot[dashed, very thin, samples = 200., smooth]
+    file {./Immagini/Simulations/12ref1.dat};
+    \addplot[very thin, samples = 200, smooth]
+    file {./Immagini/Simulations/12u1.dat};
+    \addplot[dotted, samples = 200., smooth]
+    file {./Immagini/Simulations/12ref1-10.dat};
+    \addplot[dotted,  samples = 200., smooth]
+    file {./Immagini/Simulations/12ref1+10.dat};
+    \legend{$r$\\$w$\\$\pm 10$ nm\\}
+    \end{axis}
+    \end{tikzpicture}
+
+ \begin{tikzpicture}
+    \begin{axis}[axis y line = left,
+                 axis x line = left,
+    		     width = .8\textwidth,
+    		     height = .3\textheight,
+                 ylabel = {$w$ (nm)}, 
+                 xlabel = {$t$ (ms)}]
+    \addplot[very thin, dashed,  samples = 200., smooth]
+    file {./Immagini/Simulations/12ref2.dat};
+    \addplot[very thin, samples = 200, smooth]
+    file {./Immagini/Simulations/12u2.dat};
+    \addplot[dotted, samples = 200, smooth]
+    file {./Immagini/Simulations/12ref2-10.dat};
+    \addplot[dotted,  samples = 200., smooth]
+    file {./Immagini/Simulations/12ref2+10.dat};        
+    \legend{$r$\\$w$\\$\pm 10$ nm\\}
+    \end{axis}
+    \end{tikzpicture}
+\caption{Storia temporale dello spostamento in due punti di controllo per il 12° polinomio di Zernike}
+\label{fig:8storyzernike12}
+\end{figure}
+
+\begin{figure}[htb]
+\footnotesize
+\centering
+\includegraphics[width = .7\textwidth]{controlz15}
+
+ \begin{tikzpicture}
+    \begin{axis}[legend pos = north east,
+    			 axis y line = left,
+                 axis x line = left,
+    		     width = .8\textwidth,
+    		     height = .3\textheight,
+                 ylabel = {$w$ (nm)}, 
+                 xlabel = {$t$ (ms)}]
+    \addplot[dashed, very thin, samples = 200., smooth]
+    file {./Immagini/Simulations/15ref1.dat};
+    \addplot[very thin, samples = 200, smooth]
+    file {./Immagini/Simulations/15u1.dat};
+    \addplot[dotted,  samples = 200., smooth]
+    file {./Immagini/Simulations/15ref1-10.dat};
+    \addplot[dotted, samples = 200., smooth]
+    file {./Immagini/Simulations/15ref1+10.dat};
+    \legend{$r$\\$w$\\$\pm 10$ nm\\}
+    \end{axis}
+    \end{tikzpicture}
+
+ \begin{tikzpicture}
+    \begin{axis}[legend pos = south east,
+                 axis y line = left,
+                 axis x line = left,
+    		     width = .8\textwidth,
+    		     height = .3\textheight,
+                 ylabel = {$w$ (nm)}, 
+                 xlabel = {$t$ (ms)}]
+    \addplot[very thin, dashed,  samples = 200., smooth]
+    file {./Immagini/Simulations/15ref2.dat};
+    \addplot[very thin, samples = 200, smooth]
+    file {./Immagini/Simulations/15u2.dat};
+    \addplot[dotted, samples = 200, smooth]
+    file {./Immagini/Simulations/15ref2-10.dat};
+    \addplot[dotted, samples = 200., smooth]
+    file {./Immagini/Simulations/15ref2+10.dat};        
+    \legend{$r$\\$w$\\$\pm 10$ nm\\}
+    \end{axis}
+    \end{tikzpicture}
+\caption{Storia temporale dello spostamento in due punti di controllo per il 15° polinomio di Zernike}
+\label{fig:8storyzernike15}
+\end{figure}
+
+Per le simulazioni sono stati utilizzati guadagni elevati (Tabella \ref{tab:8zergains}); ciò nonostante non si manifesta instabilità nella risposta poiché il comando in anello aperto è composto da un singolo passo di un millisecondo e non sono introdotti errori o disturbi
+Si può notare come indipendentemente dalle forme assunte e dagli spostamenti imposti dei singoli punti di controllo, gli errori rimangono ampiamente entro la fascia dei $\pm10$ nm, con oscillazioni assenti o di bassissima entità. Da notare la sovra-elongazione frequente al termine del raccordo, che viene recuperata dal controllo in ciclo chiuso nella fase in cui il comando è costante.
+
+\begin{SCtable}[2][h]
+\centering
+\footnotesize
+\begin{tabular}{ll}
+\toprule
+Frequenza ciclo aperto & 1 kHz\\
+Frequenza ciclo chiuso & 80 kHz\\
+Frequenza integrazione & 400 kHz\\
+Parametri di smorzamento & $\alpha = 6.2832~\text{Hz}$\\
+&$\beta=1.59\cdot10^{-7}~\text{s}$\\
+Guadagno proporzionale & 100000 Kg/s$^2$\\
+Guadagno derivativo & 50 Kg/s\\
+Ossimoronico & Non attivo\\
+\bottomrule
+\end{tabular}
+\label{tab:8zergains}
+\caption{Parametri di controllo utilizzati per l'inseguimento delle forme di Zernike}
+\end{SCtable}
+
+\clearpage
+\section{Storia temporale}
+\begin{figure}[htb]
+\footnotesize
+\centering
+\begin{tikzpicture}
+    \begin{axis}[name = one,
+                 legend pos = south east,
+                 axis y line = left,
+                 axis x line = left,
+    		     width = \textwidth,
+    		     height = .3\textheight,
+                 ylabel = {$w$ (nm)}, 
+                 xlabel = {$t$ (ms)}]
+    \addplot[very thin,  samples = 200., smooth]
+    file {./Immagini/Simulations2/refsmall.dat};
+    \end{axis}
+    \begin{axis}[
+                 name=two,
+                 at=(one.below south), 
+                 anchor=above north,      
+                 legend pos = south east,
+                 axis y line = left,
+                 axis x line = left,
+    		     width = \textwidth,
+    		     height = .3\textheight,
+                 ylabel = {$w$ (nm)}, 
+                 xlabel = {$t$ (ms)}]
+    \addplot[very thin,  samples = 200., smooth]
+    file {./Immagini/Simulations2/refzoom.dat};
+    \end{axis}
+    \draw[->] (4,1.8)--(5,-2);
+    \draw (4,2.1) circle (.3);
+\end{tikzpicture};
+\caption{Storia del segnale di riferimento in un periodo di 1 secondo}
+\label{fig:8refstory}
+\end{figure}
+In questa sezione viene valutata la risposta del sistema ad una tipica storia di comando. Il riferimento è composto da 1000 passi di comando in ciclo aperto alla frequenza di 1 kHz. Partendo dal sistema di controllo illustrato nella sezione precedente, verranno aggiunti al sistema i seguenti effetti:
+\begin{itemize}
+\item Simulazione del comportamento reale di sensori e attuatori;
+\item Forze costanti: attrazione dei magneti di bias e forza di gravità;
+\item Offset orizzontale fra i componenti degli attuatori causato da errori di montaggio e gravità;
+\item Simulazione dell'elaborazione delle misure: effetto di ritardo e ricostruzione della velocità tramite schemi alle differenze finite, digitalizzazione e rumore di misura.
+
+\end{itemize}
+In Figura \ref{fig:8refstory} viene mostrata la storia in corrispondenza di un attuatore; dall'ingrandimento si possono osservare i gradini raccordati di cui è composto. 
+Considerando la zona evidenziata verrà mostrato l'andamento del sistema in termini di storie temporali di posizione e velocità. 
+
+Si sottolinea che ad ogni aggiunta di una fonte di errore la matrice di rigidezza ridotta deve essere identificata nuovamente. 
+
+\subsection{Sistema ideale}
+
+La prima simulazione viene effettuata utilizzando il sistema presentato nella sezione precedente. L'inseguimento è ottimo e, dopo l'assorbimento della sovra-elongazione iniziale nel corso dei primi cicli, il sistema presenta oscillazioni che restano pressoché ovunque all'interno della fascia di $\pm10$ nm, anche con guadagni relativamente bassi.
+
+\begin{SCtable}[2][h]
+\centering
+\footnotesize
+\begin{tabular}{lc}
+\toprule
+Guadagno proporzionale & 40000 Kg/s$^2$\\
+Guadagno derivativo & 20 Kg/s\\
+Ossimoronico & Non attivo\\
+\bottomrule
+\end{tabular}
+\label{tab:8story0}
+\caption{Parametri di controllo utilizzati per la risposta in Figura \ref{fig:8story0}}
+\end{SCtable}
+
+\begin{figure}[h]
+\footnotesize
+\centering
+\begin{tikzpicture}
+    \begin{axis}[name = one,
+                 legend pos = north east,
+                 axis y line = left,
+                 axis x line = left,
+    		     width = \textwidth,
+    		     height = .2\textheight,
+                 ylabel = {$w$ (nm)}, 
+                 xlabel = {$t$ (ms)}]
+    \addplot[dashed,very thin,  samples = 200., smooth]
+    file {./Immagini/Simulations2/refzoom.dat};
+    \addplot[very thin,  samples = 200., smooth]
+    file {./Immagini/Simulations2/0utruezoom.dat};
+    \addplot[dotted, samples = 200., smooth]
+    file {./Immagini/Simulations2/refzoom+20.dat};
+    \addplot[dotted,  samples = 200., smooth]
+    file {./Immagini/Simulations2/refzoom-20.dat};
+
+        \legend{$r$\\$w$\\$\pm 20$ nm\\}
+
+    \end{axis}
+    
+    \begin{axis}[name = two,
+                 at=(one.below south), 
+                 anchor=above north,    
+                 legend pos = south east,
+                 axis y line = left,
+                 axis x line = left,
+    		     width = \textwidth,
+    		     height = .2\textheight,
+                 ylabel = {$w$ (nm)}, 
+                 xlabel = {$t$ (ms)}]
+    \addplot[dashed,very thin,  samples = 200., smooth]
+    file {./Immagini/Simulations2/refsuperzoom.dat};    
+    \addplot[dotted, samples = 200., smooth]
+    file {./Immagini/Simulations2/refsuperzoom-20.dat};    
+    \addplot[dotted,  samples = 200., smooth]
+    file {./Immagini/Simulations2/refsuperzoom+20.dat};
+    \addplot[very thin,  samples = 200., smooth]
+    file {./Immagini/Simulations2/0utruesuperzoom.dat};
+    \end{axis}
+    \draw[->] (5.5,.5)--(5.5,-1.5);
+    \draw (5.5,1.2) circle (.7);
+\end{tikzpicture}
+\caption{Risposta del sistema ideale}
+\label{fig:8story0}
+\end{figure}
+
+\clearpage
+\subsection{Simulazione del comportamento di sensori e attuatori}
+
+Inserendo gli errori di attuazione e lettura dovuti alla non idealità degli elementi del sistema di controllo si ottengono alcune differenze nella simulazione della risposta; si può notare un piccolo errore sistematico di allontanamento dalla posizione di riferimento; la distanza fra la posizione assunta e quella del sistema ideale è di pochi nanometri. Questo dato indica che, sebbene l'errore dovuto a questi effetti sia presente e rilevabile, esso è relativamente basso e può essere facilmente assorbito con l'aggiunta di un controllo integrale (o ossimoronico). 
+\begin{SCtable}[2][h]
+\centering
+\footnotesize
+\begin{tabular}{lc}
+\toprule
+Guadagno proporzionale & 40000 Kg/s$^2$\\
+Guadagno derivativo & 20 Kg/s\\
+Ossimoronico & Non attivo\\
+\bottomrule
+\end{tabular}
+\label{tab:8story1}
+\caption{Parametri di controllo utilizzati per la risposta in Figura \ref{fig:8story1}}
+\end{SCtable}
+
+\begin{figure}[h]
+\footnotesize
+\centering
+\begin{tikzpicture}
+    \begin{axis}[name = one,
+                 legend pos = north east,
+                 axis y line = left,
+                 axis x line = left,
+    		     width = \textwidth,
+    		     height = .2\textheight,
+                 ylabel = {$w$ (nm)}, 
+                 xlabel = {$t$ (ms)}]
+    \addplot[dashed,very thin,  samples = 200., smooth]
+    file {./Immagini/Simulations2/refzoom.dat};
+    \addplot[very thin,  samples = 200., smooth]
+    file {./Immagini/Simulations2/1utruezoom.dat};
+    \addplot[dotted,  samples = 200., smooth]
+    file {./Immagini/Simulations2/refzoom+20.dat};
+    \addplot[dotted,  samples = 200., smooth]
+    file {./Immagini/Simulations2/refzoom-20.dat};
+
+        \legend{$r$\\$w$\\$\pm 20$ nm\\}
+
+    \end{axis}
+    
+    \begin{axis}[name = two,
+                 at=(one.below south), 
+                 anchor=above north,    
+                 legend pos = south east,
+                 axis y line = left,
+                 axis x line = left,
+    		     width = \textwidth,
+    		     height = .2\textheight,
+                 ylabel = {$w$ (nm)}, 
+                 xlabel = {$t$ (ms)}]
+    \addplot[dashed,very thin,  samples = 200., smooth]
+    file {./Immagini/Simulations2/refsuperzoom.dat};    
+    \addplot[dotted,  samples = 200., smooth]
+    file {./Immagini/Simulations2/refsuperzoom-20.dat};    
+    \addplot[dotted,  samples = 200., smooth]
+    file {./Immagini/Simulations2/refsuperzoom+20.dat};
+    \addplot[very thin,  samples = 200., smooth]
+    file {./Immagini/Simulations2/1utruesuperzoom.dat};
+    \end{axis}
+    \draw[->] (5.5,.5)--(5.5,-1.5);
+    \draw (5.5,1.2) circle (.7);
+\end{tikzpicture}
+\caption{Variazione della risposta in seguito alla simulazione del comportamento di sensori e attuatori}
+\label{fig:8story1}
+\end{figure}
+
+
+\subsection{Forze costanti}
+Viene aggiunto l'effetto delle forze costanti: la gravità e le forze scambiate fra i magneti di shell e bias alla distanza nominale. Quest'ultima tuttavia varia con il movimento dei punti di controllo. Questa dipendenza si traduce nell'aggiunta della matrice di rigidezza di cui all'equazione \eqref{eq:6fc_xzalfa5}. Si considera, per la gravità, la configurazione di specchio orizzontale. La forza di gravità agisce verso il basso, mentre le forze di bias (il cui contributo è maggiore) agiscono verso l'alto.
+
+L'aggiunta delle azioni costanti provoca un allontanamento dal riferimento; la posizione rimane comunque entro $\pm$20 nm dal riferimento, pur senza l'attivazione di un'azione integrale.
+\begin{SCtable}[2][h]
+\centering
+\footnotesize
+\begin{tabular}{lc}
+\toprule
+Guadagno proporzionale & 40000 Kg/s$^2$\\
+Guadagno derivativo & 20 Kg/s\\
+Ossimoronico & Non attivo\\
+\bottomrule
+\end{tabular}
+\label{tab:8story2}
+\caption{Parametri di controllo utilizzati per la risposta in Figura \ref{fig:8story2}}
+\end{SCtable}
+\begin{figure}[h]
+\footnotesize
+\centering
+\begin{tikzpicture}
+    \begin{axis}[name = one,
+                 legend pos = north east,
+                 axis y line = left,
+                 axis x line = left,
+    		     width = \textwidth,
+    		     height = .2\textheight,
+                 ylabel = {$w$ (nm)}, 
+                 xlabel = {$t$ (ms)}]
+    \addplot[dashed,very thin,  samples = 200., smooth]
+    file {./Immagini/Simulations2/refzoom.dat};
+    \addplot[very thin,  samples = 200., smooth]
+    file {./Immagini/Simulations2/2utruezoom.dat};
+    \addplot[dotted, samples = 200., smooth]
+    file {./Immagini/Simulations2/refzoom+20.dat};
+    \addplot[dotted, samples = 200., smooth]
+    file {./Immagini/Simulations2/refzoom-20.dat};
+
+        \legend{$r$\\$w$\\$\pm 20$ nm\\}
+
+    \end{axis}
+    
+    \begin{axis}[name = two,
+                 at=(one.below south), 
+                 anchor=above north,    
+                 legend pos = south east,
+                 axis y line = left,
+                 axis x line = left,
+    		     width = \textwidth,
+    		     height = .2\textheight,
+                 ylabel = {$w$ (nm)}, 
+                 xlabel = {$t$ (ms)}]
+    \addplot[dashed,very thin,  samples = 200., smooth]
+    file {./Immagini/Simulations2/refsuperzoom.dat};    
+    \addplot[dotted, samples = 200., smooth]
+    file {./Immagini/Simulations2/refsuperzoom-20.dat};    
+    \addplot[dotted,  samples = 200., smooth]
+    file {./Immagini/Simulations2/refsuperzoom+20.dat};
+    \addplot[very thin,  samples = 200., smooth]
+    file {./Immagini/Simulations2/2utruesuperzoom.dat};
+    \end{axis}
+    \draw[->] (5.5,.5)--(5.5,-1.5);
+    \draw (5.5,1.2) circle (.7);
+\end{tikzpicture}
+\caption{Variazione della risposta in seguito all'introduzione di forze costanti}
+\label{fig:8story2}
+\end{figure}
+
+
+
+\subsection{Offset orizzontale degli attuatori}
+L'installazione dei sistemi di attuazione degli specchi comporta in genere un errore di posizionamento che causa il disallineamento tra gli elementi dell'attuatore. Inoltre le condizioni operative prevedono in genere un'orientazione non orizzontale dello specchio. La componente della forza peso parallela alla superficie dello specchio provoca un ulteriore disallineamento. Come mostrato nel Capitolo \ref{chap:ActSens}, esiste un accoppiamento tra i gradi di libertà di movimento orizzontale e di rotazione nella matrice di rigidezza magnetica.
+
+A differenza delle tolleranze di installazione, l'effetto della gravità possiede una direzione preferenziale (identificata dalla componente della forza peso nel piano dello specchio) e dipende dall'inclinazione: maggiore è l'angolo di rotazione rispetto alla configurazione orizzontale maggiore è il disallineamento. La combinazione dei due effetti è rappresentata con una distribuzione gaussiana avente le seguenti caratteristiche (considerando la componente della forza peso diretta lungo l'asse $x$):
+
+\begin{equation}
+\label{eq:8offset}
+\left\{
+\begin{array}{l}  
+\mu_x = 0.7 \text{ mm}\\
+\mu_y = 0.0 \text{ mm}\\
+\sigma = 0.3\text{ mm}\\
+\sigma_x = \sigma_y = \sigma
+\end{array}\right.
+\end{equation}                                            
+
+In Figura \ref{fig:8offset} sono mostrate le deviazioni ottenute per il caso in analisi per gli attuatori considerati. L'angolo considerato per il calcolo della forza peso è $\gamma=45\degree$.
+
+\begin{figure}[htb]
+\centering
+\caption{Disallineamento degli attuatori in una porzione dello specchio (in grigio la posizione nominale, in rosso il disallineamento)}
+\label{fig:8offset}
+\resizebox{.8\textwidth}{!}{
+\begin{tikzpicture}
+\filldraw[->, very thin, fill =  black!20!white](  7.898990000000000e-03*100 ,  1.053990000000000e-01*100) circle(0.0005*100);
+\filldraw[->, very thin, fill =  black!20!white](  6.590000000000000e-02*100 ,  8.263600000000000e-02*100) circle(0.0005*100);
+\filldraw[->, very thin, fill =  black!20!white](  8.733000000000002e-02*100 ,  5.954090000000000e-02*100) circle(0.0005*100);
+\filldraw[->, very thin, fill =  black!20!white](  1.010000000000000e-01*100 ,  3.115400000000000e-02*100) circle(0.0005*100);
+\filldraw[->, very thin, fill =  black!20!white](  6.833989999999998e-02*100 ,  3.042690000000000e-02*100) circle(0.0005*100);
+\filldraw[->, very thin, fill =  black!20!white](  2.311690000000000e-02*100 ,  7.114600000000000e-02*100) circle(0.0005*100);
+\filldraw[->, very thin, fill =  black!20!white](  5.005600000000000e-02*100 ,  5.559290000000000e-02*100) circle(0.0005*100);
+\filldraw[->, very thin, fill =  black!20!white](  4.390390000000000e-02*100 ,                      0*100) circle(0.0005*100);
+\filldraw[->, very thin, fill =  black!20!white](  7.623989999999999e-03*100 ,  4.323690000000000e-02*100) circle(0.0005*100);
+\filldraw[->, very thin, fill =  black!20!white](  3.363200000000000e-02*100 ,  2.822100000000000e-02*100) circle(0.0005*100);
+\filldraw[->, very thin, fill =  black!20!white](  1.057000000000000e-01*100 ,                      0*100) circle(0.0005*100);
+\filldraw[->, very thin, fill =  black!20!white](  7.480689999999998e-02*100 ,                      0*100) circle(0.0005*100);
+\filldraw[->, very thin, fill =  black!20!white](  3.861490000000000e-02*100 ,  9.839000000000001e-02*100) circle(0.0005*100);
+
+\filldraw[->, very thin, fill = red]( 7.865019561261639e-03*100  ,  1.050932159541108e-01*100) circle(0.0005*100);
+\filldraw[->, very thin, fill = red]( 6.709983686389048e-02*100  ,  8.315960623944971e-02*100) circle(0.0005*100);
+\filldraw[->, very thin, fill = red]( 8.827367016204216e-02*100  ,  5.926128332093865e-02*100) circle(0.0005*100);
+\filldraw[->, very thin, fill = red]( 1.017689602173930e-01*100  ,  3.095936417421868e-02*100) circle(0.0005*100);
+\filldraw[->, very thin, fill = red]( 6.866844823238719e-02*100  ,  3.063964490779994e-02*100) circle(0.0005*100);
+\filldraw[->, very thin, fill = red]( 2.322242002294483e-02*100  ,  7.109531749272614e-02*100) circle(0.0005*100);
+\filldraw[->, very thin, fill = red]( 5.094482311768826e-02*100  ,  5.542165882274243e-02*100) circle(0.0005*100);
+\filldraw[->, very thin, fill = red]( 4.445267401521948e-02*100  ,  8.359904019002389e-05*100) circle(0.0005*100);
+\filldraw[->, very thin, fill = red]( 8.020215484891013e-03*100  ,  4.263401314266086e-02*100) circle(0.0005*100);
+\filldraw[->, very thin, fill = red]( 3.421273209079292e-02*100  ,  2.847608596171483e-02*100) circle(0.0005*100);
+\filldraw[->, very thin, fill = red]( 1.062160284583974e-01*100  , -2.048105529875691e-04*100) circle(0.0005*100);
+\filldraw[->, very thin, fill = red]( 7.579406394721812e-02*100  ,  1.283680059322352e-04*100) circle(0.0005*100);
+\filldraw[->, very thin, fill = red]( 3.914655134488187e-02*100  ,  9.812199694095361e-02*100) circle(0.0005*100);
+
+\tdplotdrawarc[very thin]{(0,0)}{0.12*100}{0}{90}{}{}
+\tdplotdrawarc[very thin]{(0,0)}{0.05688/2*100}{0}{90}{}{}
+\draw[very thin, dashed] (0.05688/2*100,0)--(0.12*100,0);
+\draw[very thin,dashed] (0,0.05688/2*100)--(0,0.12*100);
+\end{tikzpicture}}
+\end{figure}
+
+Come si può osservare in Figura \ref{fig:8story3} il disallineamento provoca la deriva della posizione rispetto al riferimento che va ben oltre la tolleranza di riferimento di $\pm 20$ nm. Fra gli effetti di disturbo dovuti al funzionamento non ideale tra sensori e attuatori questo effetto è predominante.\\
+
+\begin{SCtable}[2][h]
+\centering
+\footnotesize
+\begin{tabular}{lc}
+\toprule
+Guadagno proporzionale & 40000 Kg/s$^2$\\
+Guadagno derivativo & 20 Kg/s\\
+Ossimoronico & Non attivo\\
+\bottomrule
+\end{tabular}
+\label{tab:8story3}
+\caption{Parametri di controllo utilizzati per la risposta in Figura \ref{fig:8story3}}
+\end{SCtable}
+\begin{figure}[h]
+\footnotesize
+\centering
+\begin{tikzpicture}
+    \begin{axis}[name = one,
+                 axis y line = left,
+                 axis x line = left,
+    		     width = \textwidth,
+    		     height = .2\textheight,
+                 ylabel = {$w$ (nm)}, 
+                 xlabel = {$t$ (ms)}]
+    \addplot[dashed,very thin,  samples = 200., smooth]
+    file {./Immagini/Simulations2/refzoom.dat};
+    \addplot[very thin,  samples = 200., smooth]
+    file {./Immagini/Simulations2/3utruezoom.dat};
+    \addplot[dotted,  samples = 200., smooth]
+    file {./Immagini/Simulations2/refzoom+20.dat};
+    \addplot[dotted, samples = 200., smooth]
+    file {./Immagini/Simulations2/refzoom-20.dat};
+
+    \end{axis}
+\end{tikzpicture}
+\caption{Variazione della risposta in seguito all'introduzione di un disallineamento negli attuatori}
+\label{fig:8story3}
+\end{figure}
+
+A causa dell'effetto di deriva si rileva la necessità di introdurre un controllo integrale. Per recuperare il tracciamento è stato pertanto attivato il contributo ossimoronico, finora non attivo (Figura \ref{fig:8story3bis}). 
+
+\begin{SCtable}[2][h]
+\centering
+\footnotesize
+\begin{tabular}{lc}
+\toprule
+Guadagno proporzionale & 40000 Kg/s$^2$\\
+Guadagno derivativo & 20 Kg/s\\
+Ossimoronico & Attivo\\
+\bottomrule
+\end{tabular}
+\caption{Parametri di controllo utilizzati per la risposta in Figura \ref{fig:8story3bis}}
+\label{tab:8story2bis}
+\end{SCtable}
+\begin{figure}[h]
+\footnotesize
+\centering
+\begin{tikzpicture}
+    \begin{axis}[name = one,
+                 legend pos = north east,
+                 axis y line = left,
+                 axis x line = left,
+    		     width = \textwidth,
+    		     height = .2\textheight,
+                 ylabel = {$w$ (nm)}, 
+                 xlabel = {$t$ (ms)}]
+    \addplot[dashed,very thin,  samples = 200., smooth]
+    file {./Immagini/Simulations2/refzoom.dat};
+    \addplot[very thin,  samples = 200., smooth]
+    file {./Immagini/Simulations2/3_bis_utruezoom.dat};
+    \addplot[dotted,  samples = 200., smooth]
+    file {./Immagini/Simulations2/refzoom+20.dat};
+    \addplot[dotted, samples = 200., smooth]
+    file {./Immagini/Simulations2/refzoom-20.dat};
+
+        \legend{$r$\\$w$\\$\pm 20$ nm\\}
+
+    \end{axis}
+    
+    \begin{axis}[name = two,
+                 at=(one.below south), 
+                 anchor=above north,    
+                 legend pos = south east,
+                 axis y line = left,
+                 axis x line = left,
+    		     width = \textwidth,
+    		     height = .2\textheight,
+                 ylabel = {$w$ (nm)}, 
+                 xlabel = {$t$ (ms)}]
+    \addplot[dashed,very thin,  samples = 200., smooth]
+    file {./Immagini/Simulations2/refsuperzoom.dat};    
+    \addplot[dotted, samples = 200., smooth]
+    file {./Immagini/Simulations2/refsuperzoom-20.dat};    
+    \addplot[dotted, samples = 200., smooth]
+    file {./Immagini/Simulations2/refsuperzoom+20.dat};
+    \addplot[very thin,  samples = 200., smooth]
+    file {./Immagini/Simulations2/3_bis_utruesuperzoom.dat};
+    \end{axis}
+    \draw[->] (5.5,.5)--(5.5,-1.5);
+    \draw (5.5,1.2) circle (.7);
+\end{tikzpicture}
+\caption{Variazione della risposta in seguito all'introduzione di un disallineamento negli attuatori dopo l'attivazione del contributo ossimoronico}
+\label{fig:8story3bis}
+\end{figure}
+L'introduzione del contributo ossimoronico permette l'assorbimento della deriva del sistema, con lo scotto di un aumento dell'ampiezza delle oscillazioni, che comunque restano all'interno della fascia di riferimento.
+\clearpage
+
+\subsection{Digitalizzazione}
+Come ultima fonte di disturbo è stata aggiunta la simulazione del sistema di acquisizione, elaborazione e attuazione. Di seguito sono elencate le caratteristiche utilizzate per la sua modellazione. I disturbi di digitalizzazione e gli schemi di ricostruzione delle quantità misurate comportano l'introduzione di un notevole errore e, soprattutto, cambiano le caratteristiche di stabilità e robustezza del sistema di controllo.
+
+\begin{figure}[h]
+\caption{Circuito del sensore}
+\label{ciao}
+\centering
+\begin{overpic}[width=0.6\textwidth]{circuito}
+\put(18,50){$C_{stray}$}
+\put(50,50){$C_{ref}$}
+\put(70,17){$V_{out}$}
+\put(20,25){$C_{sens}$}
+\put(10,20){$V_{ref}$}
+\end{overpic}
+\end{figure}
+Il controllore digitale è così strutturato \citep{manettiphd}:
+\begin{itemize}
+\item La capacità è letta analogicamente attraverso il circuito mostrato in Figura \ref{ciao}; la tensione letta $V_{out}$ viene convertita in un numero intero a 16 bit. La relazione fra la tensione e la capacità del sensore $C_{sens}$ è espressa dalla seguente formula:
+\begin{equation}
+\label{eq:8circuito}
+V_{out} = \frac{V_{ref}}{C_{ref}}\left(C_{sens}+C_{stray}\right),
+\end{equation}
+dove $V_{ref}$ è la tensione di alimentazione (pari a 1 V), $C_{ref}$ e $C_{stray}$ sono capacità dai seguenti valori nominali:
+\begin{equation}
+\label{eq:8circuito2}
+\begin{array}{l}
+C_{ref} = 39\text{ pF}\\
+C_{stray} = 3.9 \text{ pF}.
+\end{array}
+\end{equation}
+
+\item Alla misura digitale viene introdotto un errore in bit correlato al valore di capacità letto; l'errore, ottenuto tramite la correlazione di dati sperimentali, è rappresentato con una distribuzione di probabilità gaussiana a media nulla la cui deviazione standard dipende dal valore digitale della tensione letta \citep{manettiphd}. La relazione è stata ottenuta interpolando andamenti ottenuti da stime empiriche \citep{manettiphd}::
+\begin{equation}
+\label{eq:8circuito3}
+\sigma = 1.1+2.78\cdot 10^{-24} V_{dig}^5.
+\end{equation}
+\item Il controllore agisce sulla base della misura effettuata al passo precedente in ciclo chiuso; per la ricostruzione della velocità si utilizza uno schema alle differenze finite del primo ordine utilizzando le letture di posizione dei due passi precedenti:
+\begin{align}
+\label{eq:8circuito4}
+\T{F_{cl_{k}}} = \TT{G_p}\left[\T{r}(t_k)-\tilde{\T{w}}_{k-1}\right]+ \TT{G_d}\left[\dot{\T{r}}(t_k)-\frac{\tilde{\T{w}}_{k-1}-\tilde{\T{w}}_{k-2}}{\Delta t}\right].
+\end{align}
+\item I circuiti di attuazione e misura sono realizzati in modulazione di ampiezza. Questa configurazione comporta il filtraggio delle posizioni misurate e delle forze applicate; per la sua rappresentazione è stato costruito un filtro passa-basso del primo ordine. Il polo per il sensore capacitivo è posto ad una frequenza $f_{sen} = 40\text{ kHz}$, mentre per il circuito d'attuazione la frequenza è $f_{act} = 25\text{ kHz}$:
+
+\begin{align}
+\label{eq:8circuito5.0}
+C_f(s) = \frac{1}{1+s/(2 \pi f_{sen})} C(s)\\
+\label{eq:8circuito5.1}
+\T{F}_f(s) = \frac{1}{1+s/(2\pi f_{act})} \T{F}(s).\\
+\end{align}
+
+\end{itemize}
+\begin{SCtable}[2][h]
+\centering
+\footnotesize
+\begin{tabular}{lc}
+\toprule
+Guadagno proporzionale & 20000 Kg/s$^2$\\
+Guadagno derivativo & 10 Kg/s\\
+Ossimoronico & Attivo\\
+$f_T$ filtro sensore & 40 kHz\\
+$f_T$ filtro attuatore & 25 kHz\\
+\bottomrule
+\end{tabular}
+\label{tab:8story4}
+\caption{Parametri di controllo utilizzati per la risposta in Figura \ref{fig:8story4}}
+\end{SCtable}
+\begin{figure}[ht]
+\footnotesize
+\centering
+\begin{tikzpicture}
+    \begin{axis}[name = one,
+                 legend pos = north east,
+                 axis y line = left,
+                 axis x line = left,
+    		     width = \textwidth,
+    		     height = .2\textheight,
+                 ylabel = {$w$ (nm)}, 
+                 xlabel = {$t$ (ms)}]
+    \addplot[dashed,very thin,  samples = 200., smooth]
+    file {./Immagini/Simulations2/refzoom.dat};
+    \addplot[very thin,  samples = 200., smooth]
+    file {./Immagini/Simulations2/4utruezoom.dat};
+    \addplot[dotted,  samples = 200., smooth]
+    file {./Immagini/Simulations2/refzoom+20.dat};
+    \addplot[dotted,  samples = 200., smooth]
+    file {./Immagini/Simulations2/refzoom-20.dat};
+
+        \legend{$r$\\$w$\\$\pm 20$ nm\\}
+
+    \end{axis}
+    
+    \begin{axis}[name = two,
+                 at=(one.below south), 
+                 anchor=above north,    
+                 legend pos = south east,
+                 axis y line = left,
+                 axis x line = left,
+    		     width = \textwidth,
+    		     height = .2\textheight,
+                 ylabel = {$w$ (nm)}, 
+                 xlabel = {$t$ (ms)}]
+    \addplot[dashed,very thin,  samples = 200., smooth]
+    file {./Immagini/Simulations2/refsuperzoom.dat};    
+    \addplot[dotted,  samples = 200., smooth]
+    file {./Immagini/Simulations2/refsuperzoom-20.dat};    
+    \addplot[dotted,  samples = 200., smooth]
+    file {./Immagini/Simulations2/refsuperzoom+20.dat};
+    \addplot[very thin,  samples = 200., smooth]
+    file {./Immagini/Simulations2/4utruesuperzoom.dat};
+    \end{axis}
+    \draw[->] (5.5,.5)--(5.5,-1.5);
+    \draw (5.5,1.2) circle (.7);
+\end{tikzpicture}
+\caption{Variazione della risposta in seguito all'introduzione della digitalizzazione}
+\label{fig:8story4}
+\end{figure}
+L'introduzione dell'errore di digitalizzazione ha causato l'instabilizzazione del sistema. Per questo si è reso necessario un abbassamento dei guadagni, con conseguente diminuzione delle prestazioni generali del sistema (Figura \ref{fig:8story4}). In questa configurazione il contributo ossimoronico (che negli specchi attualmente operativi non è implementato ed è sostituito da un contributo integrale in ciclo chiuso) è fondamentale per evitare la deriva della posizione dello specchio, che resta entro la fascia di riferimento $\pm20$ nm.
+
+
+Per un'analisi della causa dell'instabilità che ha reso necessario l'abbassamento dei guadagni, è utile osservare l'andamento della posizione in un singolo passo di controllo in anello aperto. Per questo è stata effettuata un'analisi di risposta senza forze costanti e disallineamenti, in modo da identificare il contributo della sola digitalizzazione.
+In Figura \ref{fig:81step} è mostrato un confronto fra posizioni e velocità vere e misurate. Si può notare che, mentre lo spostamento misurato ben approssima quello reale ai fini della parte proporzionale del controllo in ciclo chiuso, la velocità ottenuta per differenze finite mostra un andamento altalenante che approssima malamente il reale andamento delle velocità. A causa dell'elevata frequenza delle oscillazioni, anche schemi di ricostruzione alle differenze finite di ordini più elevati portano a risultati simili. 
+
+\begin{figure}[ht]
+\footnotesize
+\centering
+\begin{tikzpicture}
+    \begin{axis}[name = one,
+                 legend pos = south east,
+                 axis y line = left,
+                 axis x line = left,
+    		     width = \textwidth,
+    		     height = .2\textheight,
+                 ylabel = {$w$ (nm)}, 
+                 xlabel = {$t$ (ms)}]
+    \addplot[dashed,very thin,  samples = 200., smooth]
+    file {./Immagini/Simulations3/refgigazoom.dat};
+    \addplot[very thin,  samples = 200., smooth]
+    file {./Immagini/Simulations3/5utruegigazoom.dat};
+        \addplot[mark = *, dashed, very thin,  samples = 200., smooth]
+    file {./Immagini/Simulations3/5ugigazoom.dat};
+    \addplot[dotted, samples = 200., smooth]
+    file {./Immagini/Simulations3/refgigazoom+20.dat};
+    \addplot[dotted,  samples = 200., smooth]
+    file {./Immagini/Simulations3/refgigazoom-20.dat};
+
+        \legend{$r$\\$w$\\$\tilde{w}$\\$\pm 20$ nm\\}
+
+    \end{axis}
+    
+    \begin{axis}[name = two,
+                 at=(one.below south), 
+                 anchor=above north,    
+                 legend pos = south east,
+                 axis y line = left,
+                 axis x line = left,
+    		     width = \textwidth,
+    		     height = .2\textheight,
+                 ylabel = {$\dot{w}$ (mm/s)}, 
+                 xlabel = {$t$ (ms)}]
+    \addplot[dashed,very thin,  samples = 200., smooth]
+    file {./Immagini/Simulations3/refdgigazoom.dat};    
+    \addplot[very thin,  samples = 200., smooth]
+    file {./Immagini/Simulations3/5udtruegigazoom.dat};    
+    \addplot[mark = *, dashed, very thin,  samples = 200., smooth]
+    file {./Immagini/Simulations3/5udgigazoom.dat};
+    
+            \legend{$\dot{r}$\\$\dot{w}$\\$\dot{\tilde{w}}$\\}
+   \end{axis}
+   
+   
+\end{tikzpicture}
+\caption{Dettaglio sull'azione di misura in un passo temporale di 1 ms (differenze finite)}
+\label{fig:81step}
+\end{figure}
+
+L'errore nella ricostruzione delle derivate assume un ruolo cruciale: se per un ciclo di controllo la velocità letta ha segno opposto alla velocità reale, la componente derivativa dell'azione di controllo introduce energia nel sistema anziché dissiparla. Questo è il principale fattore che pone un limite ai guadagni derivativi utilizzabili, poiché a guadagni elevati il sistema diviene presto instabile a causa della continua immissione di energia. 
+
+Dall'analisi effettuata, risulta che soltanto per il 35\% delle velocità ricostruite il segno è concorde con la velocità vera. Per questo, nella Sezione \ref{sec:recons} sono state valutate alcune strategie alternative di ricostruzione della velocità.
+
+\section{Strategie alternative di ricostruzione della velocità}
+\label{sec:recons}
+\subsection{Differenze finite sulla posizione filtrata}
+Una prima alternativa all'utilizzo diretto delle differenze finite consiste nel filtraggio delle posizioni lette, utilizzando un filtro digitale del primo ordine che opera alla frequenza di controllo; la pulsazione di taglio è un parametro di scelta per la scelta di un compromesso fra il tracciamento corretto dei segnali a bassa frequenza e lo sfasamento implicito nell'applicazione del filtro stesso. Allargando la banda diminuiscono gli effetti di filtraggio; d'altro canto, restringendola aumenta lo sfasamento introdotto. Dalle prove effettuate si è riscontrata stabilità per il sistema con frequenze variabili intorno ai 10 kHz.
+
+Il filtro è digitale e lavora alla frequenza di controllo in ciclo chiuso ($80$ kHz) e assume la seguente forma:
+\begin{equation}
+\label{eq:8filtro1}
+w^f_{k+1} = a w^f_{k}+(1-a)\tilde{w}_k,
+\end{equation}
+dove $w^f$ è lo stato utilizzato per la ricostruzione della velocità tramite differenze finite, $\tilde{w}$ è , come di consueto, lo spostamento misurato e $a$ è il parametro (dipendente dalla frequenza di taglio scelta) che regola le proprietà del filtro; a maggiore $a$ corrisponde una frequenza di taglio minore. Si può operare direttamente su tale parametro per la regolazione del filtro.\\
+
+Per la retroazione proporzionale si preferisce, a dispetto del rumore ma a favore della stabilità,  utilizzare direttamente lo spostamento misurato; l'azione derivativa sfrutta invece le differenze finite sui valori filtrati dello stesso.
+
+\begin{SCtable}[2][h]
+\centering
+\footnotesize
+\begin{tabular}{lc}
+\toprule
+Guadagno proporzionale & 20000 Kg/s$^2$\\
+Guadagno derivativo & 15 Kg/s\\
+Ossimoronico & Attivo\\
+$f_T$ filtro sensore & 40 kHz\\
+$f_T$ filtro attuatore & 25 kHz\\
+$f_T$ filtro per ricostruzione & 10 kHz\\
+\bottomrule
+\end{tabular}
+\label{tab:8story5}
+\caption{Parametri di controllo utilizzati per la risposta in Figura \ref{fig:81step.1}}
+\end{SCtable}
+\begin{figure}[htb]
+\footnotesize
+\centering
+\begin{tikzpicture}
+    \begin{axis}[name = two,
+                 at=(one.below south), 
+                 anchor=above north,    
+                 legend pos = north east,
+                 axis y line = left,
+                 axis x line = left,
+    		     width = \textwidth,
+    		     height = .2\textheight,
+                 ylabel = {$\dot{w}$ (mm/s)}, 
+                 xlabel = {$t$ (ms)}]
+    \addplot[dashed,very thin,  samples = 200., smooth]
+    file {./Immagini/Simulations3/refdgigazoom.dat};    
+    \addplot[very thin,  samples = 200., smooth]
+    file {./Immagini/Simulations3/6udtruegigazoom.dat};    
+    \addplot[mark = *, dashed,  very thin,  samples = 200., smooth]
+    file {./Immagini/Simulations3/6udgigazoom.dat};
+    
+            \legend{$\dot{r}$\\$\dot{w}$\\$\dot{\tilde{w}}$\\}
+   \end{axis}
+   
+   
+\end{tikzpicture}
+\caption{Dettaglio sull'azione di misura in un passo temporale di 1 ms (differenze finite sulla posizione filtrata)}
+\label{fig:81step.1}
+\end{figure}
+Dai risultati si può osservare quanto la velocità risulti meglio interpretata: le ampiezze sono paragonabili e gli errori di segno sono notevolmente diminuiti. La percentuale di valori correttamente interpretati, sale al 55\%. Questo incremento è fondamentale per la robustezza del sistema in quanto, in mancanza di precisione, se il numero di segni corretti è almeno pari al 50\% del totale, il contributo complessivo del sistema di controllo sarà sempre di dissipazione.
+
+ Inoltre la deviazione standard della differenza tra velocità ricostruita e reale è passato da circa 5.5 mm/s a 1.5 mm/s. 
+Ne consegue un notevole miglioramento della stabilità del sistema.
+
+\subsection{Il filtro come osservatore di stato}
+Un'interpretazione dello schema \eqref{eq:8filtro1} permette di giustificare l'incremento della qualità della velocità ricostruita e offre spunti per l'applicazione di schemi più raffinati. Si scriva il seguente sistema agli stati, basato sull'approssimazione dello spostamento reale $w$ come quantità costante a tratti soggetta ad un disturbo $d$ e da un rumore di misura $r$:
+\begin{equation}
+\label{eq:8filtro2}
+\left\{
+\begin{array}{l}
+\dot{w} = 0+d\\
+\tilde{w} = w +r.
+\end{array}\right.
+\end{equation}
+
+Si scelga come disturbo $d$ l'attuale velocità del sistema $v^w$. Così facendo, la banale equazione $\dot{w} = v^w$ viene reinterpretata, identificando con $v^w$ un disturbo che agisce su un sistema in cui $\dot{w}=0$:
+
+\begin{equation}
+\label{eq:8filtro3}
+\left\{
+\begin{array}{l}
+\dot{w} = 0+v^w\\
+\tilde{w} = w +r.
+\end{array}\right.
+\end{equation}
+
+Il sistema, discretizzato a tempo $\Delta t$ assume la forma:
+\begin{equation}
+\label{eq:8filtro4}
+\left\{
+\begin{array}{l}
+w_{k+1} = w_k+\Delta t ~v^w_k\\
+\tilde{w}_k = w_k +r_k.
+\end{array}\right.
+\end{equation}
+
+Si può osservare come la prima delle equazioni \eqref{eq:8filtro4} altro non è che l'equazione di ricostruzione della velocità tramite lo schema delle differenze finite all'indietro di primo ordine:
+\begin{equation}
+\label{eq:8filtro5}
+v^w_k = \frac{w_{k+1}-w_k}{\Delta t}
+\end{equation}
+
+Applicando al filtro un osservatore alla Kalman, si ha:
+\begin{equation}
+\label{eq:8filtro6}
+\left\{
+\begin{array}{l}
+w_{k+1} = w_k+L(\tilde{w}_k-w_k)+\Delta t~ v^w_k\\
+\tilde{w}_k = w_k +r_k
+\end{array}\right.
+\end{equation}
+
+\begin{equation}
+\label{eq:8filtro7}
+\left\{
+\begin{array}{l}
+w_{k+1} = (1-L)w_k+L\tilde{w}_k+\Delta t~ v^w_k\\
+\tilde{w}_k = w_k +r_k.
+\end{array}\right.
+\end{equation}
+
+L'equazione di ricostruzione dello stato $w$ pensato come costante a tratti diviene pertanto:
+
+\begin{equation}
+\label{eq:8filtro8}
+w_{k+1} = (1-L)w_k+L\tilde{w}_k,
+\end{equation}
+A questa equazione si associa quella per la stima del "disturbo" $v^w_k$:
+\begin{equation}
+\label{eq:8filtro9}
+v^w_k = \frac{w_{k+1}-(1-L)w_k-L\tilde{w}_k}{\Delta t},
+\end{equation}
+che può essere approssimata come segue:
+\begin{equation}
+\label{eq:8filtro9bis}
+v^w_K = \frac{w_{k+1}-w_k}{\Delta t}.
+\end{equation}
+
+Le equazioni \eqref{eq:8filtro9} e \eqref{eq:8filtro9bis} portano a prestazioni simili, con una leggera differenza che dipende dal parametro $L$. \'E pertanto giustificabile l'utilizzo dell'Eq. \eqref{eq:8filtro9bis}, che corrisponde allo schema alle differenze finite all'indietro applicato a $w$.
+Si ottiene così la stessa forma dell'equazione \eqref{eq:8filtro1}, in cui $a=1-L$. La scelta della frequenza di taglio del filtro (e quindi della sua banda) è in realtà interpretabile come la scelta del guadagno dell'osservatore: se $L$ è prossimo a $0$ il sistema tende a non filtrare (la banda del filtro si allarga) poiché è alta la fiducia dell'osservatore sulla stima di $w$ tramite la misura $\tilde{w}$.\\
+
+Quest'interpretazione giustifica l'aumento di prestazioni ottenuto, e fornisce uno strumento per la determinazione della frequenza di taglio del filtro. 
+\subsection{Schema di ricostruzione di ordine 1} 
+
+Se si sceglie di rappresentare lo spostamento con un andamento lineare, interpretando quindi la velocità come una costante soggetta al "disturbo" di accelerazione $a^w$, si ha:
+
+\begin{equation}
+\label{eq:8filtro10}
+\begin{array}{l}
+\left\{
+\begin{array}{c}
+\dot{w}\\
+\dot{v}^w\end{array}\right\} = \left[\begin{array}{cc}0&1\\0&0\end{array}\right]\left\{
+\begin{array}{c}
+w\\
+v^w\end{array}\right\}+
+\left[\begin{array}{c}0\\1\end{array}\right]a^w\\
+
+\tilde{w} = \left[\begin{array}{cc} 1 &0\end{array}\right]\left\{
+\begin{array}{c}
+w\\
+v^w\end{array}\right\} + r.
+\end{array}
+\end{equation}
+
+In tempo discreto:
+\begin{equation}
+\label{eq:8filtro11}
+\begin{array}{l}
+\left\{
+\begin{array}{c}
+w\\
+v^w\end{array}\right\}_{k+1} = \left[\begin{array}{cc}1&\Delta t\\0&1\end{array}\right]\left\{
+\begin{array}{c}
+w\\
+v^w\end{array}\right\}_k+
+\left[\begin{array}{c}\frac{\Delta t^2}{2}\\\Delta t\end{array}\right]a^w_k\\
+
+
+\tilde{w}_k = \left[\begin{array}{cc} 1&0\end{array}\right]\left\{
+\begin{array}{c}
+w\\
+v^w\end{array}\right\}_k+ r_k.
+\end{array}
+\end{equation}
+Aggiungendo un osservatore di stato si ha:
+\begin{equation}
+\label{eq:8filtro12}
+\begin{array}{l}
+\begin{array}{ll}
+\left\{
+\begin{array}{c}
+w\\
+v^w\end{array}\right\}_{k+1} =& \left[\begin{array}{cc}1-L_1&\Delta t\\-L_2&1\end{array}\right]\left\{
+\begin{array}{c}
+w\\
+v^w\end{array}\right\}_k+\\
+&+\left[\begin{array}{c}L_1\\L_2\end{array}\right]\tilde{w}_k+
+\left[\begin{array}{c}\frac{\Delta t^2}{2}\\\Delta t\end{array}\right]a^w_k
+\end{array}\\
+
+\tilde{w}_k = \left[\begin{array}{cc} 1&0\end{array}\right]\left\{
+\begin{array}{c}
+w\\
+v^w\end{array}\right\}_k+ r_k.
+\end{array}
+\end{equation}
+
+Si possono pertanto scrivere le equazioni di stato dell'osservatore:
+\begin{equation}
+\label{eq:8filtro13}
+\left\{
+\begin{array}{l}
+w_{k+1} = (1-L_1)w_k+L_1\tilde{w}_k+\Delta t~ v^w_k\\
+v^w_{k+1} = v^w_k+L_2(\tilde{w}_k-w_k).
+\end{array}\right.
+\end{equation}
+
+Una scelta interessante sta nel non utilizzare la velocità ricostruita tramite il filtro, scegliendo di applicare il consueto schema alle differenze finite sullo spostamento:
+\begin{equation}
+\label{eq:8filtro14}
+v^w_{k+1} = \frac{w_{k+1}-w_k}{dt}.
+\end{equation}
+
+
+\begin{figure}[ht]
+\footnotesize
+\centering
+\begin{tikzpicture}
+ 
+    \begin{axis}[name = one,  
+                 legend pos = south east,
+                 axis y line = left,
+                 axis x line = left,
+    		     width = \textwidth,
+    		     height = .15\textheight,
+                 ylabel = {$\dot{w}$ (mm/s)}, 
+                 xlabel = {$t$ (ms)}]
+    \addplot[very thin,  samples = 200., smooth]
+    file {./Immagini/Simulations3/9udtruecomparison.dat};     
+    \addplot[mark = *, dashed, very thin,  samples = 200., smooth]
+    file {./Immagini/Simulations3/9udcomparison.dat};
+    
+            \legend{$\dot{w}$\\$\dot{\tilde{w}}$\\}
+   \end{axis}
+    \begin{axis}[name = two,
+                 at=(one.below south), 
+                 anchor=above north,    
+                 legend pos = south east,
+                 axis y line = left,
+                 axis x line = left,
+    		     width = \textwidth,
+    		     height = .15\textheight,
+                 ylabel = {$\dot{w}$ (mm/s)}, 
+                 xlabel = {$t$ (ms)}]
+    \addplot[very thin,  samples = 200., smooth]
+    file {./Immagini/Simulations3/9udtruefcomparison.dat};   
+    \addplot[mark = *, dashed, very thin,  samples = 200., smooth]
+    file {./Immagini/Simulations3/9udfcomparison.dat};
+    
+            \legend{$\dot{w}$\\$\dot{\tilde{w}}$\\}
+   \end{axis}
+   
+   
+\end{tikzpicture}
+\caption{Velocità ricostruita tramite lo schema di ordine 1: sopra con l'utilizzo diretto della velocità osservata, sotto con l'utilizzo delle differenze finite sulla posizione osservata}
+\label{fig:8filtro2ordine}
+\end{figure}
+
+I risultati mostrano che con il secondo metodo la cancellazione del rumore di misura è peggiore ma la perdita di fase introdotta dal filtro è notevolmente inferiore. L'utilizzo della velocità ricostruita dall'osservatore (Eq. \eqref{eq:8filtro13}) infatti porta ad instabilità, mentre la ricostruzione tramite schema alle differenze finite sulla posizione ricostruita garantisce buone prestazioni. In Figura \ref{fig:8filtro2ordine} è mostrata la differenza nella ricostruzione della velocità seguendo le due strategie. Nell'immagine si può notare che le oscillazioni sono elevate, perché le fluttuazioni del transitorio iniziale non sono ancora state assorbite. Tuttavia a causa dell'instabilità che incorre nel primo caso, non è possibile effettuare un confronto per tempi più avanzati. 
+
+Mentre per lo schema di ordine $0$, analizzato in precedenza, le differenze fra l'utilizzo delle velocità ottenute dall'osservatore (Eq. \eqref{eq:8filtro9}) e tramite differenze finite (Eq. \eqref{eq:8filtro9bis}) è bassa, aumentando l'ordine della ricostruzione la differenza è più marcata e il recupero di fase ottenuto dalle differenze finite (Eq. \eqref{eq:8filtro14}) diventa fondamentale. A discapito della precisione nella ricostruzione, l'attenzione deve essere quindi posta sul recupero di fase nella ricostruzione della velocità.
+
+I risultati ottenuti da diverse prove non evidenziano un aumento di prestazioni tale da giustificare l'incremento dell'ordine dell'osservatore rispetto al filtro di ordine $0$, che resta, per i risultati ottenuti in questo lavoro, il miglior compromesso tra semplicità di progettazione e miglioramento di prestazioni.
+
+\section{Controllo in tensione}
+
+\begin{figure}[h]
+\caption{Circuito di controllo in tensione}
+\label{fig:8tensioncontrolscheme}
+\centering
+\begin{overpic}[width=0.6\textwidth]{tensioncontrolscheme}
+\put(29,35){$L$}
+\put(58,35){$R$}
+\put(83,22){$K_i$}
+\put(15,22){$V_{C}$}
+\end{overpic}
+\end{figure}
+Attualmente l'architettura dello schema di controllo prevede il controllo in corrente. Viene valutata in questa sezione la possibilità di utilizzare un semplice controllo in tensione, con l'aggiunta di un termine di controreazione proporzionale alla corrente. Il controllo in tensione prevede  l'attuazione del comando attraverso una differenza di potenziale $V_C$ applicata per ciascun attuatore al circuito descritto in sezione \ref{sec:concflux} e mostrato in Figura \ref{fig:8tensioncontrolscheme}:
+\begin{equation}
+\label{eq:8tensione1}
+\de_t i = -\frac{R}{L} i -\frac{K_i}{L}\de_t w + \frac{1}{L}V_C
+\end{equation}
+
+La resistenza $R$ dell'induttore è stata stimata considerando geometria e numero di avvolgimenti per il calcolo della lunghezza $l$ e dell'area $A$ del filo:
+
+\begin{equation}
+\label{eq:8resistenza1}
+\left\{
+\begin{array}{l}
+l = 6.9366 ~\text{m}\\
+A = 4.8\cdot10^{-8} ~\text{m}^2\\
+\rho = 1.68\cdot10^{-8}~\Omega\text{m},
+\end{array}\right.
+\end{equation}
+da cui:
+\begin{equation}
+\label{eq:8resistenza2}
+R = \frac{\rho l}{A} = 2.428 \Omega.
+\end{equation}
+
+I dati del circuito sono elencati in Tabella \ref{tab:8tensioncontrolscheme}.
+
+\begin{table}
+\centering
+\caption{Dati del circuito per il controllo in tensione}
+\label{tab:8tensioncontrolscheme}
+\begin{tabular}{lc}
+\toprule
+Resistenza $R$ & $2.428 ~\Omega$\\
+Induttanza $L$ & $3.683\cdot10^{-4}~\text{H}$\\
+Controtensione $K_i$ &  $2.025 ~ 2.026 N/A$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+La tensione di controllo è ottenuta scalando per il coefficiente $R$ la corrente di controllo desiderata (somma dei contributi in \textit{feedback} e \textit{feedforward}) ottenuta con gli stessi parametri utilizzati in precedenza:
+\begin{equation}
+\label{eq:8tensione2}
+\de_t i = -\frac{R}{L} i -\frac{K_i}{L}\de_t w + \frac{R}{L}i_C.
+\end{equation}
+ Viene però aggiunto un termine di controllo proporzionale alla corrente con guadagno $R_p$ in modo da regolare l'ampiezza di banda del sistema dinamico. Infatti, aggiungendo tale termine si ha:
+ \begin{align}
+\label{eq:8tensione3}
+\de_t i &= -\frac{R}{L} i -\frac{K_i}{L}\de_t w + \frac{R}{L}i_C+\frac{R_p}{L}(i_C-\tilde{i})\\
+& = -\frac{R}{L} i -\frac{K_i}{L}\de_t w + \frac{R+R_p}{L}i_C-\frac{R_p}{L}\tilde{i},
+\end{align}
+dove $\tilde{i}$ è la misura della corrente del circuito, campionata ad ogni passo di ciclo chiuso. Ipotizzando la misura di corrente come la somma della corrente reale e di un rumore di misura $r_i$ si ha:
+\begin{equation}
+\label{eq:8tensione4}
+\de_t i = -\frac{R+R_p}{L} i -\frac{K_i}{L}\de_t w + \frac{R+R_p}{L}i_C + \frac{R_p}{L}r_i.
+\end{equation}
+\'E quindi evidente l'effetto di aumento della banda del filtro rappresentato dall'equazione del circuito. Alzando sufficientemente il guadagno $R_p$ il sistema di controllo tende al controllo puro in corrente. Tuttavia, un vantaggio del controllo in tensione è la possibilità di regolare l'ampiezza della banda per garantire un inseguimento sufficientemente preciso della corrente di controllo $i_C$ con però gli impliciti vantaggi di filtraggio dei disturbi ad alta frequenza e attenuazione degli effetti di spill-over. 
+
+La frequenza di taglio della dinamica del circuito $f_T$ è esprimibile come:
+\begin{equation}
+\label{eq:8tensione5}
+f_T = \frac{R+R_p}{2\pi L},
+\end{equation}
+e per il circuito senza controllo in corrente vale:
+\begin{equation}
+\label{eq:8tensione6}
+f_T = \frac{R}{2\pi L} = 1049.2~\text{Hz}.
+\end{equation}
+ 
+Per la seguente analisi è stato scelto un guadagno $R_p = 20 R$, da cui si ottiene:
+\begin{equation}
+\label{eq:8tensione7}
+f_T = \frac{R+R_p}{2\pi L} = 22033.6~\text{Hz}.
+\end{equation}
+
+In Figura \ref{fig:8tensionfig1} è mostrato il confronto della risposta dello specchio con i medesimi parametri (Tabella \ref{tab:8tensionfig1}) fra controllo in corrente e in tensione. Va sottolineato che la dinamica del circuito appena descritta sostituisce il filtro sull'attuatore. I risultati mostrano che il controllo in tensione sia attuabile già con una banda relativamente bassa (22 kHz) con prestazioni sostanzialmente equivalenti al controllo in corrente. 
+
+
+
+\begin{table}[h]
+\centering
+\footnotesize
+\begin{tabular}{lc}
+\toprule
+Guadagno proporzionale & 20000 Kg/s$^2$\\
+Guadagno derivativo & 15 Kg/s\\
+Ossimoronico & Attivo\\
+$f_T$ filtro sensore & 40 kHz\\
+$f_T$ filtro attuatore & 25 kHz\\
+Schema di ricostruzione & Differenze finite con filtro di ordine $0$\\
+\bottomrule
+\end{tabular}
+\caption{Parametri di controllo utilizzati per la risposta in Figura \ref{fig:8tensionfig1}}
+\label{tab:8tensionfig1}
+\end{table}
+\begin{figure}[ht]
+\footnotesize
+\centering
+\begin{tikzpicture}
+    \begin{axis}[name = one,
+                 legend pos = north east,
+                 axis y line = left,
+                 axis x line = left,
+    		     width = \textwidth,
+    		     height = .2\textheight,
+                 ylabel = {$w$ (nm)}, 
+                 xlabel = {$t$ (ms)}]
+    \addplot[dashed,very thin,  samples = 200., smooth]
+    file {./Immagini/Simulations2/refzoom.dat};
+    \addplot[very thin,  samples = 200., smooth]
+    file {./Immagini/Simulations2/4utruezoom.dat};
+    \addplot[dotted,  samples = 200., smooth]
+    file {./Immagini/Simulations2/refzoom+20.dat};
+    \addplot[dotted,  samples = 200., smooth]
+    file {./Immagini/Simulations2/refzoom-20.dat};
+
+        \legend{$r$\\$w$\\$\pm 20$ nm\\}
+
+    \end{axis}
+    
+    
+    \begin{axis}[name = two,
+                 at=(one.below south), 
+                 anchor=above north, 
+                 legend pos = north east,
+                 axis y line = left,
+                 axis x line = left,
+    		     width = \textwidth,
+    		     height = .2\textheight,
+                 ylabel = {$w$ (nm)}, 
+                 xlabel = {$t$ (ms)}]
+    \addplot[dashed,very thin,  samples = 200., smooth]
+    file {./Immagini/Simulations2/refzoom.dat};
+    \addplot[very thin,  samples = 200., smooth]
+    file {./Immagini/Simulations3/current_utrue.dat};
+    \addplot[dotted,  samples = 200., smooth]
+    file {./Immagini/Simulations2/refzoom+20.dat};
+    \addplot[dotted,  samples = 200., smooth]
+    file {./Immagini/Simulations2/refzoom-20.dat};
+
+        \legend{$r$\\$w$\\$\pm 20$ nm\\}
+
+    \end{axis}
+    
+\end{tikzpicture}
+\caption{Confronto fra controllo in corrente (sopra) e controllo in tensione (sotto)}
+\label{fig:8tensionfig1}
+\end{figure}
+
+

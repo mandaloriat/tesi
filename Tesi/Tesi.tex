@@ -1,0 +1,235 @@
+% !TEX encoding = UTF-8 Unicode
+% !TEX TS-program = pdflatex
+% !BIB program = biber
+
+
+% Classe report di KOMA-Script
+%
+% Durante la stesura della tesi, impostare l'opzione  "oneside" e commentare
+% l'opzione "twoside" per leggere più comodamente le bozze; si tenga presente
+% che con l'opzione "oneside" le testatine delle pagine pari e quelle delle
+% pagine dispari sono uguali e riportano solo il titolo del capitolo.
+% Inoltre non ci sono pagine bianche per consentire che i capitoli si aprano
+% solo sulle pagine di destra, Per la versione definitiva, commentare la riga
+% che imposta l'opzione "oneside" e reimpostare l'opzione "twoside".
+%
+% È sconsigliabile cambiare le altre opzioni.
+%
+\documentclass[%
+    twoside,
+    paper=a4,
+    % oneside,
+    dottedtoc,
+    manychapters,
+]{tesiclassica}
+
+%%%%%%%%%%%%%%%%%%%%%%%%% Impostazioni per una specifica tesi
+\usepackage{minitoc}
+\usepackage{amsmath,amsthm}
+%\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{epstopdf}% per .eps
+\usepackage{booktabs}
+\usepackage{textcomp}% per °
+\usepackage{rotating}
+\usepackage{color, colortbl}
+\usepackage{xcolor}
+\usepackage{wrapfig}
+\usepackage{multicol}
+\usepackage{sidecap}
+\usepackage{pgfplots}
+\usepackage{tikz-3dplot}
+\usepackage{lscape}
+\usepackage{textcomp}
+\usepackage{gensymb}
+\usepackage{overpic}
+\usepackage{caption}
+
+\usetikzlibrary{intersections,positioning,arrows,3d,calc}
+\pgfplotsset{/pgf/number format/use comma,compat=newest}
+\usepgfplotslibrary{polar}
+
+\numberwithin{equation}{chapter}
+
+% SETTINGS -------------------------------------------------------
+\captionsetup{font=small}
+\addtolength{\oddsidemargin}{.6in}
+\addtolength{\evensidemargin}{-.6in}
+
+\tikzset{
+    %Define standard arrow tip
+    >=stealth',
+    %Define style for boxes
+    punkt/.style={
+           rectangle,
+           rounded corners,
+           draw=black, very thick,
+           text width=6.5em,
+           minimum height=2em,
+           text centered},
+    % Define arrow style
+    pil/.style={
+           ->,
+           thick,
+           shorten <=2pt,
+           shorten >=2pt,}
+}
+
+
+
+% THEOREMS -------------------------------------------------------
+\newtheorem{thm}{Theorem}[chapter]
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{prop}[thm]{Proposition}
+\theoremstyle{definition}
+\newtheorem{defn}[thm]{Definition}
+\theoremstyle{remark}
+\newtheorem{rem}[thm]{Remark}
+
+
+
+% l'autore della tesi               
+\newcommand{\myName}{Mattia Andolfatto\xspace}
+\newcommand{\myNormalName}{Mattia Andolfatto\xspace}
+
+         
+% il titolo della tesi
+\newcommand{\myTitle}{Accoppiamenti elettromagnetici nell'analisi servo-elastica di uno specchio adattivo\xspace}
+
+% il tipo di tesi
+\newcommand{\myDegree}{Tesi di Laurea Specialistica\xspace}
+
+% l'università
+\newcommand{\myUni}{POLITECNICO DI MILANO\xspace}
+
+% la facoltà
+\newcommand{\myFaculty}{Scuola di Ingegneria Industriale e dell'Informazione\xspace}
+
+% il dipartimento
+\newcommand{\myDepartment}{Dipartimento di Scienze e Tecnologie Aerospaziali\xspace}
+
+% il corso
+\newcommand{\myCourse}{Ingegneria Aeronautica\xspace}
+
+% il relatore
+\newcommand{\myProf}{Marco Morandini\xspace}
+
+% l'eventuale correlatore
+\newcommand{\mycoProf}{Paolo Mantegazza\xspace}
+
+% il luogo sede dell'ateneo
+\newcommand{\myLocation}{Milano\xspace}
+
+% il periodo della laurea
+\newcommand{\myTime}{Anno Accademico 2014~-~2015\xspace}
+
+% matricola
+\newcommand{\myMat}{800438\xspace}
+
+%colore
+\newcommand{\myColor}{\color[rgb]{0.5859375, 0, 0.04375}}
+
+\hypersetup{colorlinks=true, linkcolor=black, urlcolor=black, citecolor=black}
+\renewcommand{\theequation}{\thechapter.\arabic{equation}}
+
+\ifthenelse{\boolean{@linedheaders}}%
+
+    {% something like Bringhurst  
+    \titleformat{\chapter}[display]%
+        {\relax}
+        {\mbox{}\oldmarginpar{\vspace*{-2\baselineskip}\myColor\chapterNumber\thechapter}}
+        {0pt}%
+        {\myColor\huge\raggedright\spacedallcaps}% change color and size here
+        [\myColor\normalsize\vspace*{.8\baselineskip}\titlerule]% 
+    }
+    
+
+\titleformat{\part}
+[display]
+{\centering\huge\myColor}
+{\spacedallcaps{\partname} \thepart}
+{0pt}
+{\titlerule[1pt]\vspace{1pc}\huge\spacedallcaps}
+%
+\titlespacing*{\part}{0pt}{0pt}{20pt}
+
+    
+\renewcommand\cftchapfont{\normalfont\myColor}
+\renewcommand\cftchappagefont{\normalfont\myColor}
+\let\originaleqref\ref
+\renewcommand{\eqref}{\originaleqref}
+
+\newcommand{\T}[1]{\boldsymbol{#1}}
+
+\newcommand{\TT}[1]{\boldsymbol{#1}}
+
+\newcommand{\TTT}[1]{\mathcal{#1}}
+
+\newcommand{\TTTT}[1]{\mathbb{#1}}
+
+\newcommand{\rot}{\text{rot}}
+
+\newcommand{\grad}{\text{grad}}
+
+\newcommand{\dive}{\text{div}}
+
+\newcommand{\lap}{\text{lap}}
+
+\newcommand{\de}{\partial}
+
+
+% per la bibliografia
+\addbibresource{Bibliografia.bib}
+% per generare testo fittizio, non serve per una tesi vera, serve solo per questo esempio
+%\usepackage{lipsum}
+
+% indica a LaTeX la cartella dove sono riposte le immagini
+\graphicspath{{Immagini/MaterialeInizialeFinale/}{Immagini/Introduzione/}{Immagini/EquazioniMaxwell/}{Immagini/BVP/}{Immagini/Boundary/}{Immagini/Output/}{Immagini/ActSens/}{Immagini/Mirror/}{Immagini/Simulations/}{Immagini/Simulations2/}{Immagini/Simulations3/}{Immagini/Conclusioni/}}
+% eccezioni all'algoritmo di sillabazione
+%\hyphenation{so-le-no-ida-li-tà, ran-do-ma-ti-che, i-ste-re-ti-co, co-er-ci-ti-vi-tà, os-si-mo-ro-ni-co, in-sta-bi-liz-za-zio-ne}
+
+% inizio del documento                         
+\begin{document}
+
+\pagenumbering{roman}
+\pagestyle{plain}
+
+%******************************************************************
+% Materiale iniziale
+%******************************************************************
+\input{MaterialeInizialeFinale/Frontespizio2}
+\input{MaterialeInizialeFinale/DietroAlTitolo}\cleardoublepage
+%\input{MaterialeInizialeFinale/Dedica}\cleardoublepage
+\input{MaterialeInizialeFinale/Sommario+Abstract}\cleardoublepage
+%\input{MaterialeInizialeFinale/Pubblicazioni}\cleardoublepage
+\input{MaterialeInizialeFinale/Ringraziamenti}\cleardoublepage 
+\pagestyle{scrheadings}
+\input{MaterialeInizialeFinale/Indici}\cleardoublepage
+
+%******************************************************************
+% Materiale principale
+%******************************************************************
+\pagenumbering{arabic}
+\input{Capitoli/Introduzione}
+\cleardoublepage\part{Costruzione e validazione dei modelli elettromagnetici}
+\input{Capitoli/EquazioniMaxwell}
+\input{Capitoli/Boundary}
+\input{Capitoli/BVP}
+\input{Capitoli/Output}
+\cleardoublepage\part{Analisi degli elementi del sistema di controllo}
+\input{Capitoli/ActSens}
+\input{Capitoli/Mirror}
+\input{Capitoli/Simulations}
+\input{Capitoli/Conclusioni}
+%\appendix
+
+% *****************************************************************
+% Materiale finale
+%******************************************************************
+\input{MaterialeInizialeFinale/Bibliografia}
+%\input{MaterialeInizialeFinale/Colophon}\cleardoublepage 
+%\input{MaterialeInizialeFinale/Dichiarazione}
+
+% fine del documento
+\end{document}

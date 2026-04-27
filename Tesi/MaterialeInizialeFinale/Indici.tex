@@ -1,0 +1,42 @@
+% !TEX encoding = UTF-8 Unicode
+% !TEX TS-program = pdflatex
+% !TEX root = ../Tesi.tex
+
+%*******************************************************
+% Indici
+%*******************************************************
+%\refstepcounter{dummy}
+\phantomsection
+\pdfbookmark[1]{\contentsname}{tableofcontents}
+\setcounter{tocdepth}{2}
+\dominitoc\tableofcontents
+\markboth{\spacedlowsmallcaps{\contentsname}}{\spacedlowsmallcaps{\contentsname}} 
+\clearpage
+
+\begingroup 
+    \let\clearpage\relax
+    \let\cleardoublepage\relax
+%    \let\cleardoublepage\relax
+    %*******************************************************
+    % Elenco delle figure
+    %*******************************************************    
+%    \refstepcounter{dummy}
+    \phantomsection
+    \pdfbookmark[1]{\listfigurename}{lof}
+    \listoffigures
+
+    \vspace*{8ex}
+
+    %*******************************************************
+    % Elenco delle tabelle
+    %*******************************************************
+%    \refstepcounter{dummy}
+    \phantomsection
+    \pdfbookmark[1]{\listtablename}{lot}
+    \listoftables
+        
+    \vspace*{8ex}
+       
+\endgroup
+
+\cleardoublepage

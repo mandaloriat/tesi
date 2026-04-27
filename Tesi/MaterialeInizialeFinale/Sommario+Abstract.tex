@@ -1,0 +1,33 @@
+% !TEX encoding = UTF-8 Unicode
+% !TEX TS-program = pdflatex
+% !TEX root = ../Tesi.tex
+
+%*******************************************************
+% Sommario+Abstract
+%*******************************************************
+\pdfbookmark[1]{Sommario}{Sommario}
+\begingroup
+\let\clearpage\relax
+\let\cleardoublepage\relax
+\let\cleardoublepage\relax
+
+\chapter*{Sommario}
+Nei moderni sistemi di ottica adattiva applicati all'osservazione astronomica sono impiegati attuatori e sensori \textit{contactless} di natura elettromagnetica. Questa tesi riguarda l'analisi delle caratteristiche di questi elementi e il miglioramento dei modelli di simulazione utilizzati per la progettazione dei sistemi di controllo. Sfruttando le librerie FEniCS sono stati sviluppati codici ad elementi finiti (FEM) basati su modelli quasi-stazionari elettromagnetici. \'E stata implementata una tecnica di rappresentazione di domini infiniti basata sulle trasformazioni conformi e sono stati implementati e confrontati metodi per il calcolo di forze e coppie, induttanze, flussi concatenati e capacità. Il codice è stato validato attraverso casi noti e confronti con dati sperimentali. 
+\'E stata quindi analizzata l'unità di controllo $M4$, che sarà installata sullo specchio quaternario del telescopio E-ELT ed è composta da un sensore capacitivo e un attuatore lineare induttivo. \'E stato caratterizzato il comportamento degli elementi di controllo rispetto alle variazioni di configurazione legate alla forma dello specchio. 
+Infine, sempre tramite FEniCS, è stato sviluppato il modello strutturale di uno specchio adattivo e sono stati valutati gli effetti di modellazione del gruppo di controllo nelle prestazioni del sistema. Sulla base delle simulazioni, sono state analizzate alcune tecniche per l'aumento della robustezza e dell'efficienza del controllore: forme alternative di ricostruzione della velocità e controllo in tensione.\\\\
+\textbf{Keywords}: Ottica adattiva, Elettromagnetismo, Controllo di Strutture
+\newpage
+\selectlanguage{english}
+\pdfbookmark[1]{Abstract}{Abstract}
+\chapter*{Abstract}
+
+This thesis deals with the analysis of the contactless actuators and sensors currently used in modern adaptive optics systems applied to astronomical observation. Making use of the Fenics libraries, programs based on the Finite Element Method (FEM) have been developed for the electromagnetic analysis of quasi-stationary based models. A technique for the representation of infinite domains based on conformal mapping was implemented.  Methods for the calculation of forces and torques, inductances, magnetic flows and capacities have also been implemented and compared. The code has been validated through test cases and comparisons with experimental data.
+The $M4$ control unit, that will be installed on the quaternary mirror of the E-ELT telescope and is composed of a capacitive sensor and a voice-coil actuator, has been analyzed. At last, using FEniCS, the structural model of an adaptive mirror has been developed and the effects of modeling of the control group were evaluated on the performance of the system. Reelying on simulations results, some techniques have been analyzed in order to increase robustness and efficiency of the controller: different methods for the velocity reconstruction and voltage control.\\\\
+\textbf{Keywords}: Adaptive optics, Electromagnetics, Control of Structures
+
+\selectlanguage{italian}
+
+\endgroup			
+
+\vfill
+

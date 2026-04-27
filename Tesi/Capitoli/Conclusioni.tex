@@ -1,0 +1,30 @@
+% !TEX encoding = UTF-8 Unicode
+% !TEX TS-program = pdflatex
+% !TEX root = ../Tesi.tex
+
+
+
+%************************************************
+\myChapter{Conclusioni}
+%************************************************
+\label{chap:Conclusioni}
+Nel presente lavoro è illustrato un metodo per la modellazione delle caratteristiche elettriche e magnetiche di sensori e attuatori \textit{contactless} comunemente applicati ai moderni sistemi di ottica adattiva. Particolare attenzione è stata posta all'implementazione di un modello di simulazione elettromagnetica adatto all'analisi di sensori capacitivi e attuatori magnetici utilizzando le librerie open-source FEniCS.
+
+Sono stati sviluppati metodi per il calcolo di forze e coppie scambiate, induttanze, capacità e flussi concatenati. Il codice sviluppato ha permesso di ottenere un modello del comportamento degli organi di attuazione e misura in funzione della deformata dello specchio. In questo modo è possibile una migliore descrizione dell'interazione tra dinamiche elettromagnetiche ed elastiche del sistema adattivo. Le simulazioni effettuate hanno mostrato che quest'interazione porta ad una sensibile variazione nelle prestazioni dello specchio e non può pertanto essere trascurata. 
+
+Per la compensazione degli effetti di deriva  causati dall'interazione elettromagnetica si è rivelato fondamentale l'utilizzo nel sistema di controllo di un contributo integrale. Sebbene attualmente sia comune l'implementazione di un contributo integrativo nel controllore a ciclo chiuso, in questo lavoro è mostrata come alternativa l'efficacia del controllore in anello aperto ibrido o "ossimoronico". 
+
+\'E stata analizzata l'influenza dello schema di ricostruzione della velocità nella nascita di instabilità nel sistema. Dopo aver evidenziato le prestazioni dello schema attualmente in uso, sono state applicate delle soluzioni alternative basate sul filtraggio digitale; in generale, una corretta progettazione dei filtri ha portato ad un buon incremento di robustezza del sistema. La loro efficacia è stata giustificata illustrando l'analogia con la ricostruzione della posizione tramite osservatore di Kalman. 
+
+Infine, è stato valutato il controllo in tensione come alternativa del controllo in corrente attualmente utilizzato. I test condotti hanno mostrato la possibilità della sua applicazione, in particolare grazie all'aggiunta di una retroazione sulla corrente per la regolazione della banda del circuito; la scelta dei parametri di progetto permette di avere una dinamica del circuito sufficientemente veloce da garantire l'inseguimento ad alta frequenza tipico dei controlli terrestri e di sfruttare l'attenuazione dei rumori ad alta frequenza e l'effetto di spill-over.
+
+\section{Sviluppi futuri}
+L'accoppiamento tra la dinamica strutturale e le caratteristiche elettromagnetiche degli elementi di controllo può essere valutato per specchi di grandi dimensioni per un'ulteriore affinamento della qualità delle simulazioni e del progetto del controllore. Inoltre può essere valutato l'eventuale incremento di robustezza fornito dagli schemi di filtraggio proposti.
+
+Ulteriori analisi sul sistema di controllo in tensione possono portare ad un incremento delle prestazioni degli specchi terrestri.\\ 
+
+In ambito elettromagnetico è necessaria una campagna di prove sperimentali per affinare la correlazione tra forze e flussi scambiati fra i diversi elementi degli attuatori, affinando i parametri dei modelli numerici in modo da aumentarne l'attendibilità. 
+
+La tecnica per il calcolo della capacità per condensatori assial-simmetrici può essere applicata  valutando gli effetti di concavità delle armature. In questo modo è possibile un ulteriore raffinamento della simulazione del processo di lettura.
+
+Oltre che per le simulazioni dirette basate sugli elementi finiti mostrate in questo lavoro, gli effetti di interazione elettromagnetica possono essere inseriti nei programmi dedicati al progetto del controllore.
